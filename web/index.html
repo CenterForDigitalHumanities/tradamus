@@ -1,0 +1,319 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html data-ng-app="tradamus">
+    <head>
+        <title>Tradamus - Digital Critical Edition Creation</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" media="all">
+        <link rel="stylesheet" href="app/app.css" media="all">
+        <link rel="stylesheet" href="app/lib/ng-sortable.css" media="all">
+        <link rel="stylesheet" href="app/lib/ng-sortable.style.css" media="all">
+        <link rel="stylesheet" href="app/lib/loading-bar.css" media="screen">
+        <link rel="stylesheet" href="app/lib/animate.css" media="screen">
+        <link href='http://fonts.googleapis.com/css?family=BenchNine:700' rel='stylesheet' type='text/css'>
+        <style type="text/css">
+            html {
+                background-color: #111111;
+            }
+            div.no-gutter {
+                padding: 0;
+            }
+            .benchBtn,footer button.btn-link {
+                color: rgba(255,255,255,.5);
+                text-transform: uppercase;
+            }
+            .benchBtn:hover,footer button.btn-link:hover {
+                color: rgba(255,255,255,1);
+            }
+            .benchBtn {
+                width:62.5%;
+            }
+            .benchBtn+.benchBtn {
+                width:35%;
+                margin-left: 1%;
+            }
+            .postcolon {
+                text-transform: uppercase;
+                text-align: right;
+                color: #666;
+                font-family: sans-serif;
+                font-size: 1.68rem;
+                position: relative;
+                right: 0;
+                top: -1em;
+                letter-spacing: .25rem;
+                font-weight: bold;
+            }
+            .nav.nav-stacked {
+                width: 18%;
+                margin-right: 2%;
+                float: left;
+            }
+            .nav.nav-stacked li a {
+                text-transform: uppercase;
+                color: rgba(255,255,255,.6);
+                font-family: 'BenchNine',sans-serif;
+                font-size: 2rem;
+                transition: zIndex 0s, background 500ms, color 500ms, border 500ms;
+                text-decoration: none;
+                position: relative;
+                background-color: #003a53;
+                border-color: #002f46;
+                padding: 10px 16px;
+                line-height: 1.33;
+                border-radius: 6px;
+                text-align: center;
+                white-space: nowrap;
+                vertical-align: middle;
+                cursor: pointer;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                background-image: none;
+                border: 1px solid transparent;
+            }
+            .nav.nav-stacked li a.active,.nav.nav-stacked li a:hover {
+                color: #fff;
+                background-color: #428bca;
+            }
+            .tab-content {
+                width:80%;
+                float:left;
+            }
+            .tab-pane .panel-title {
+                color:#31708f;
+                text-transform: uppercase;
+                border-bottom: #666 2px solid;
+                font-weight: bold;
+                font-size: 168%;
+            }
+            .tab-pane .image-panel {
+                width:40%;
+                margin:-15px;
+                margin-left: 0;
+            }
+            .tab-pane .image-panel img {
+                box-shadow: -.25rem -.25rem 3rem rgba(0,0,0,.68);
+            }
+            #landingLogin {
+                position: absolute;
+                top:20%;
+                width:100%;
+                left:0;
+            }
+            #landingLogin:after {
+                content:"";
+                position:fixed;
+                z-index: 1;
+                background: rgba(0,0,0,.68);
+                top:-20%;
+                left:-20%;
+                height:140%;
+                width:140%;
+            }
+            .close-backdrop {
+                position:fixed;
+                top:1rem;
+                right:1rem;
+                z-index: 2;
+            }
+            footer {
+                position: fixed;
+                bottom: 0;left:0;
+                width:100vw;
+                text-align: center;
+                background: #666;
+            }
+        </style>
+    </head>
+    <body id="container" class="container ng-cloak animated fadeIn" ng-controller="authController">
+        <header id="title" class="form-group clearfix">
+            <div class="no-gutter col-xs-9 col-sm-8">
+                <img src="assets/img/TRAD_Fullogo.png" alt="Tradamus logo" width="100%">
+                <div class="postcolon">digital critical edition creation</div>
+            </div>
+            <div class="col-xs-3 col-sm-4 form-group" style="padding-top: 16px;">
+                <img src="assets/img/MELLON-LOGO.png" alt="Mellon Foundation" width="32%">
+                <img src="assets/img/CDH-LOGO.png" alt="Center for Digital Humanities" width="32%">
+                <img src="assets/img/STLU_Logo.png" alt="Saint Louis University" width="32%">
+            </div>
+            <div class="col-xs-12 col-sm-4 caps-label">
+                <span ng-hide="user.id>0">
+                    <button class="btn btn-lg btn-info benchBtn animate" ng-click="auth.signup=true;display.showLogin=true">sign up</button>
+                <button class="btn btn-lg btn-primary benchBtn animate" ng-click="display.showLogin=true">login</button>
+                </span>
+                <span ng-show="user.id>0">
+                    <a class="btn btn-block btn-warning btn-lg" href="main.html">Dashboard</a>
+                </span>
+            </div>
+            <img src="assets/img/masthead.png" alt="masthead" width="100%" class="hidden-xs col-sm-12">
+        </header>
+        <div id="landingLogin" ng-show="display.showLogin">
+            <button class="close-backdrop btn btn-danger" ng-click="display.showLogin=undefined;">Cancel &times;</button>
+            <login class="animated fadeInDownBig"></login>
+        </div>
+        <div class="col-xs-12" style="padding-bottom:3rem;" ng-controller="helpController">
+            <div class="panel-default clearfix">
+                <div class="panel-body" ng-controller="landingController">
+                    <tabset vertical="true" type="pills">
+                        <tab heading="tradamus" class='animate fadeIn'>
+                            <div class="pull-right clearfix image-panel">
+                                <img src="assets/img/TRADHOMERIGHT2.jpg" alt="" width="80%" class="pull-right">
+                                <img src="assets/img/TRADHOMERIGHT2.jpg" alt="" width="90%" class="pull-right">
+                                <img src="assets/img/TRADHOMERIGHT3.png "alt="" width="100%" class="pull-right">
+                            </div>
+                            <div ng-bind-html="welcome">empty</div>
+                        </tab>
+                        <tab heading="how to use">
+                            <div ng-bind-html="using"></div>
+                        </tab>
+                        <tab heading="about us">
+                            <div class="panel-heading">
+                                <h1 class="panel-title">The Tradamus Team</h1>
+                            </div>
+                            <p>
+                                The Tradamus suite of tools has been developed and is
+                                maintained by the Center for Digital Humanities
+                                <a href="mailto:digitalhumanities@slu.edu">&lt;digitalhumanities@slu.edu&gt;</a>.
+                                The original team for the 1.0 release in July 2015 is
+                                listed here.
+                            </p>
+                            <dl>
+                                <dt>Dr. Jim Ginther, Principal Investigator</dt>
+                                <dd>Director, Center for Digital Humanities, Saint Louis University</dd>
+                                <dt>Domhnall Ó h'Éigheartaigh</dt>
+                                <dd>Project Manager, UX and UI, Center for Digital Humanities, Saint Louis University</dd>
+                                <dt>Patrick Cuba</dt>
+                                <dd>Lead Developer, Center for Digital Humanities, Saint Louis University</dd>
+                                <dt>Eric Smith</dt>
+                                <dd>Software Developer, <a href="http://www.tarkvara.org/" target="_blank">Tarkvara Design</a></dd>
+                            </dl>
+                        </tab>
+                        <tab heading="technical">
+                            <div class="panel-heading">
+                                <h1 class="panel-title"><i class="fa fa-terminal"></i>T:\ rada.mu -s</h1>
+                            </div>
+                            <p>
+                                <span class="lead">Web standards</span>
+                                are enforced in Tradamus by default, with broad classes for most digital
+                                objects and open hooks for user specification. Annotations follow the
+                                <a href="http://www.openannotation.org/" target="_blank"
+                                   tooltip="Open Annotation Collaboration">OAC</a>
+                                1.0 model. Tradamus also makes direct use of or extends
+                                <a href="http://iiif.io" tooltip="International Image Interoperability Framework">IIIF</a> and the SharedCanvas component
+                                it encompasses.
+                            </p>
+                            <h3>T-PEN</h3>
+                            <p>Tradamus is fully integrated with <a href="http://t-pen.org" target="_blank">T-PEN</a>
+                                allowing you to bring your transcriptions, images and encoding from T-PEN into Tradamus
+                                in a batch or individually.
+                            </p>
+                            <p>
+                                <span class="lead">Data objects</span> within Tradamus fall into a
+                                few general categories:
+                            <dl class="dl-horizontal">
+                                <dt>Project</dt>
+                                <dd>This object contains (by reference) all the Materials and
+                                    Annotations that make up a single project. It is viewable on the
+                                    Tradamus web site with permissions, or resolvable as JSON at a
+                                    stable URI. The Project is a
+                                    <a href="https://sourceforge.net/p/tradamus/wiki/Edition%20API%20Structures/">special aggregate</a>,
+                                    but all of its contents are based on web standards.</dd>
+                                <dt>Materials</dt>
+                                <dd>All "documents" for consideration within an Project are part of
+                                    the Materials. This includes witnesses to a manuscript, early editions,
+                                    annotated bibliographies, commentary, introductions and any other text
+                                    the editor may eventually want displayed or analyzed in a Publication.
+                                    Every material is available in its simple JSON format and JSON-LD
+                                    <span tooltip="SharedCanvas Manifest">sc:Manifest</span> format,
+                                    which can be easily used by third-party tools and
+                                    viewers.</dd>
+                                <dt>Annotations</dt>
+                                <dd>Every assertion made by an editor through the Tradamus interface
+                                    is recorded as annotation on the objects listed above. At various places
+                                    in the interface, the unique URI for an individual Annotation may be
+                                    available, but they are also listed in the digital objects they annotate.
+                                    Understanding Annotations (see help) is not necessary for the basic use of Tradamus,
+                                    but is helpful for power users.</dd>
+                                <dt>Publication</dt>
+                                <dd>A Publication contains the references to the text, apparatus
+                                    and indices, as well as rules for inclusion and formatting. A single
+                                    Project may have several Publications, serving different purposes or
+                                    visualizing the same data in different ways. While Tradamus provides
+                                    a variety of templates for publication, the Publication object is
+                                    <a href="https://sourceforge.net/p/tradamus/wiki/Publication%20API%20Structures/">well-documented</a>
+                                    as most users may want to build a specific template for their purpose.</dd>
+                                <dt>APIs and<br>Interoperability</dt>
+                                <dd>Though the Data objects detailed above are used throughout Tradamus,
+                                    it is possible to reference them remotely or include them in a Project from
+                                    a remote location. In this way, Tradamus allows for third-party tools to create
+                                    or edit Annotations and Materials in specialized ways not supported in the
+                                    current interface. External changes made will persist in Tradamus and can be used
+                                    as easily as those created completely within our ecosystem.</dd>
+                            </dl>
+                        </p>
+                        </tab>
+                        <tab heading="publishing">
+                            <div ng-bind-html="publishing"></div>
+                        </tab>
+                    </tabset>
+                </div>
+            </div>
+        </div>
+        <footer class="caps-label">
+            <button class="btn btn-link">Home</button>
+            <button class="btn btn-link">Help</button>
+            <button class="btn btn-link">Contact Us</button>
+            <button class="btn btn-link" ng-click="tabs[2].active=true">About Us</button>
+            <button class="btn btn-link" ng-click="display.showLogin=true">Login</button>
+        </footer>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-route.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.js"></script>
+        <script type="text/javascript" src="app/lib/angular-file-upload.min.js"></script>
+        <script type="text/javascript" src="app/lib/xml2json.min.js"></script>
+        <script type="text/javascript" src="app/lib/ng-sortable.js"></script>
+        <script type="text/javascript" src="app/lib/http-auth-interceptor.js"></script>
+        <script type="text/javascript" src="app/lib/loading-bar.js"></script>
+        <script type="text/javascript" src="app/lib/Markdown.Converter.js"></script>
+        <script type="text/javascript" src="app/lib/Markdown.Sanitizer.js"></script>
+
+        <script src="//cdn.jsdelivr.net/rangy/1.3alpha.20140706/rangy-core.js"></script>
+        <script src="//cdn.jsdelivr.net/rangy/1.3alpha.20140706/rangy-cssclassapplier.js"></script>
+        <script src="//cdn.jsdelivr.net/rangy/1.3alpha.20140706/rangy-selectionsaverestore.js"></script>
+        <script src="//cdn.jsdelivr.net/rangy/1.3alpha.20140706/rangy-serializer.js"></script>
+
+        <script src="app/app.js"></script>
+        <script src="assets/js/controllers.js"></script>
+        <script src="assets/js/models.js"></script>
+        <script src="assets/js/services.js"></script>
+        <script src="assets/js/directives.js"></script>
+        <script src="assets/js/filters.js"></script>
+        <script src="app/auth/authDirectives.js"></script>
+        <script src="app/auth/authControllers.js"></script>
+        <script src="app/edition/editionControllers.js"></script>
+        <script src="app/metadata/metadataController.js"></script>
+        <script src="app/components/textInputController.js"></script>
+        <script src="app/components/fileInput.js"></script>
+        <script src="app/components/objectTree.js"></script>
+        <script src="app/components/thumbnails.js"></script>
+        <script src="app/help/help.js"></script>
+        <script src="app/permissions/permissionsController.js"></script>
+        <script src="app/materials/materialController.js"></script>
+        <script src="app/components/exportController.js"></script>
+        <script src="app/components/navigation.js"></script>
+        <script src="app/manifest/manifestController.js"></script>
+        <script src="app/sequences/organizeControllers.js"></script>
+        <script src="app/annotation/annotationController.js"></script>
+        <script src="app/draft/draftController.js"></script>
+        <script src="app/publication/publicationControllers.js"></script>
+        <script src="app/components/utils.js"></script>
+    </body>
+</html>

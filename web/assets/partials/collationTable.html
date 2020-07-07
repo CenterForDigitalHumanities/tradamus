@@ -1,0 +1,26 @@
+<div>
+    <h3>Collation Table</h3>
+    <div ng-show="FileReaderSupported" file-input="file" on-change="previewContent()"></div>
+    <p ng-hide="table.data">Something isn't quite working. <br>{{file.content}}</p>
+    <label>Delimiter:<input type='text' ng-model="table.delimiter" ng-change='updateTableData()' /></label>
+    <table>
+        <thead>
+        <th></th>
+        <th ng-repeat='h in table.header'>{{h.siglum|| h.title}}</th>
+        <th>Notes</th>
+    </thead>
+    <tr ng-repeat='r in table.rows'>
+        <th>
+            <select ng-model="r.label"
+                    ng-options='c.content for c in r.cells'
+                    ></select>
+        </th>
+        <td ng-repeat='c in r.cells'>
+            <input ng-model='c.content' type="text" />
+        </td>
+        <td>
+            <input ng-model='c.note' ng-change='addNote()' type="text" />
+        </td>
+    </tr>
+    </table>
+</div>

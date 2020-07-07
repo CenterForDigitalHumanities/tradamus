@@ -1,0 +1,21 @@
+<overlay ng-show="viewTranscription">
+<div id="summary" ng-controller="STOACtrl">
+        <ul>
+            <label ng-repeat="w in edition.witnesses"><input ng-model="selection.index" ng-change="selectWitness()" type="radio" ng-value="'{{$index}}'"/>{{w.title || w.id || w}}</label>
+        </ul>
+        <div ng-controller="witnessTranscriptionCtrl">
+          Pages: <label style='width:auto;padding:.25em;display:inline-block;' ng-repeat='page in edition.witnesses[selection.index].transcription.pages' ng-class="{selected: $index==selection.page}"><input ng-model='selection.page' type="radio" ng-value="'{{$index}}'" />{{page.title || $index+1}}</label>
+          <div class='pageLike'>
+                      <figure style="max-width: 40%; float:right;" ng-hide='!selection.page || !edition.witnesses[selection.index].transcription.pages[selection.page].canvas.images[0].uri'>
+               <figcaption>
+                 <strong>{{edition.witnesses[selection.index].transcription.pages[selection.page].title}}</strong><br>
+                 {{edition.witnesses[selection.index].transcription.pages[selection.page].canvas.images[0].uri}}
+               </figcaption>
+               <img width='100%' ng-src='{{clear || edition.witnesses[selection.index].transcription.pages[selection.page].canvas.images[0].uri}}' />
+               <span ng-hide='!selection.page || edition.witnesses[selection.index].transcription.pages[selection.page].canvas.images[0].uri'>No image associated with this folio.</span>
+          </figure>
+            {{edition.witnesses[selection.index].transcription.pages[selection.page].text || "No text on page " + edition.witnesses[selection.index].transcription.pages[selection.page].title }}
+            </div>
+        </div>
+    </div>
+</overlay>

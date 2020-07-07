@@ -1,0 +1,41 @@
+<form ng-submit="create(mat)" name="createMaterial" id="createMaterial">
+    <div class="panel panel-info drop-shadow">
+        <div class="panel-heading">
+            <button type="button" class="btn btn-default close" ng-click="data.manually = null">
+                <i class="fa fa-close"></i>
+            </button>
+            <h4 class="panel-title">Creating a New Material</h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input class="form-control" id="title" ng-model="mat.title">
+            </div>
+            <div class="form-group">
+                <label for="siglum">Siglum</label>
+                <input class="form-control" id="siglum" ng-model="mat.siglum">
+            </div>
+            <button type="button" class="btn btn-default" collapse="addText" ng-click="addText = true">
+                <i class="fa fa-plus"></i>
+                Add Text
+            </button>
+            <div class="form-group" collapse="!addText">
+                <label for="text">Text</label>
+                <textarea class="form-control" id="text" ng-model="mat.text" rows="6"></textarea>
+                <label for="lb">Linebreak String</label>
+                <input class="form-control" id="lb" ng-model="mat.lineBreak">
+                <label for="pb">Pagebreak String</label>
+                <input class="form-control" id="pb" ng-model="mat.pageBreak">
+                <div class="alert alert-info text-center lead"
+                     popover-trigger="mouseenter"
+                     popover="Use this form to quickly create containers for new materials then edit them to add details">
+                    Still more to add?
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer text-right">
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+</div>
+    </form>
+

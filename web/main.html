@@ -1,0 +1,98 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html data-ng-app="tradamus">
+    <head>
+        <title>Tradamus</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" media="all">
+        <link rel="stylesheet" href="app/app.css" media="all">
+        <link rel="stylesheet" href="app/lib/ng-sortable.css" media="all">
+        <link rel="stylesheet" href="app/lib/ng-sortable.style.css" media="all">
+        <link rel="stylesheet" href="app/lib/loading-bar.css" media="screen">
+        <link rel="stylesheet" href="app/lib/animate.css" media="screen">
+        <link href='http://fonts.googleapis.com/css?family=BenchNine:700' rel='stylesheet' type='text/css'>
+        <style type="text/css">
+            [ng-cloak].splash {
+             display:block !important; /* overridden by angularjs onload */
+            }
+            .splash {
+                line-height: 100vh;
+                font-size: 200%;
+                text-align: center;
+                color: #DDD;
+                font-family: 'Junicode', serif;
+                display: none;
+            }
+        </style>
+    </head>
+    <body ng-controller="mainController">
+        <div ng-cloak="true" class="splash glower">
+            Loading Application&hellip;
+        </div>
+        <header id="title" ng-class="{reduce:user.id>0}" class="animate">
+            <img src="assets/img/TRAD_Fullogo.png" alt="Tradamus logo" width="90%">
+            </header>
+    <login ng-hide="user.id > 0"></login>
+    <div id="container" class="container-fluid" ng-show="user.id>0" userid="{{::user.id}}">
+        <tr-nav></tr-nav>
+        <ng-view>
+        </ng-view>
+    </div>
+    <feedback class="lift"></feedback>
+    <!--Load AngularJS-->
+        <!--        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>-->
+        <!--<script src="assets/js/libs/angularjs/1.0.7/angular-1.0.7.js"></script>-->
+        <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
+        <!--<script type="text/javascript" src="assets/js/libs/angular-file-upload-shim.min.js"></script>-->
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
+        <!--<script src="assets/js/libs/angularjs/1.1.5/angular-1.1.5.js"></script>-->
+        <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular-sanitize.js"></script>-->
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-route.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.js"></script>
+        <script type="text/javascript" src="app/lib/angular-file-upload.min.js"></script>
+        <script type="text/javascript" src="app/lib/xml2json.min.js"></script>
+        <script type="text/javascript" src="app/lib/ng-sortable.js"></script>
+        <script type="text/javascript" src="app/lib/http-auth-interceptor.js"></script>
+        <script type="text/javascript" src="app/lib/loading-bar.js"></script>
+        <script type="text/javascript" src="app/lib/Markdown.Converter.js"></script>
+        <script type="text/javascript" src="app/lib/Markdown.Sanitizer.js"></script>
+
+        <script src="//cdn.jsdelivr.net/rangy/1.3alpha.20140706/rangy-core.js"></script>
+        <script src="//cdn.jsdelivr.net/rangy/1.3alpha.20140706/rangy-cssclassapplier.js"></script>
+        <script src="//cdn.jsdelivr.net/rangy/1.3alpha.20140706/rangy-selectionsaverestore.js"></script>
+        <script src="//cdn.jsdelivr.net/rangy/1.3alpha.20140706/rangy-serializer.js"></script>
+
+        <script src="app/app.js"></script>
+        <script src="assets/js/controllers.js"></script>
+        <script src="assets/js/models.js"></script>
+        <script src="assets/js/services.js"></script>
+        <script src="assets/js/directives.js"></script>
+        <script src="assets/js/filters.js"></script>
+        <script src="app/auth/authDirectives.js"></script>
+        <script src="app/auth/authControllers.js"></script>
+        <script src="app/dashboard/dashboardControllers.js"></script>
+        <script src="app/edition/editionControllers.js"></script>
+        <script src="app/metadata/metadataController.js"></script>
+        <script src="app/components/textInputController.js"></script>
+        <script src="app/components/fileInput.js"></script>
+        <script src="app/components/objectTree.js"></script>
+        <script src="app/components/thumbnails.js"></script>
+        <script src="app/help/help.js"></script>
+        <script src="app/permissions/permissionsController.js"></script>
+        <script src="app/materials/materialController.js"></script>
+        <script src="app/components/exportController.js"></script>
+        <script src="app/components/navigation.js"></script>
+        <script src="app/manifest/manifestController.js"></script>
+        <script src="app/sequences/organizeControllers.js"></script>
+        <script src="app/annotation/annotationController.js"></script>
+        <script src="app/draft/draftController.js"></script>
+        <script src="app/publication/publicationControllers.js"></script>
+        <script src="app/components/utils.js"></script>
+</body>
+</html>

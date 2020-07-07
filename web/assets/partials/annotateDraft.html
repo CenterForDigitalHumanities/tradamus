@@ -1,0 +1,85 @@
+<div ng-controller="annotateDraftController">
+    <h3>Annotating Draft</h3>
+    <a class="closeBtn" ng-click="closeIntraform();">x</a>
+<header>
+    {{edition.title || edition.id}}
+</header>
+<p class="instructions">Select a text range to add a new annotation or click to select.</p>
+<div ng-controller="editionTranscriptionController"
+     ng-class="{annotating:display.annoList || selected.annotation}"
+     class="">
+    <!--    <a ng-click="previousPage()" ng-show='selectpage.index'>Previous</a>
+        <select ng-model="selectpage"
+            class='text'
+            ng-change="updatePage()"
+            ng-options="page as (page.title || '(untitled)') for page in witness.transcription.pages">
+    </select>
+        <a ng-click="nextPage()" ng-hide='selectpage.index + 1 == witness.transcription.pages.length'>Next</a>-->
+<!--TODO replace ng-hide with orderBy and $last, $first-->
+    <input id="continuous" type="hidden" ng-model="continuous" ng-init="continuous=true">
+    <label for="currentAnnos"><input id="currentAnnos" type="checkbox" ng-model="display.annoList">Show annotations</label>
+    <label for="showHeaders"><input id="showHeaders" type="checkbox" ng-model="display.showHeaderLabels">Show Section Titles</label>
+    <div id="" track-scroll data-annotate-text style="max-height:25em" class="overflow-auto" ng-class="{continuous:continuous}">
+        <div ng-repeat="outline in edition.outlines" class="pageLike page">
+            <h4 ng-show="display.showHeaderLabels">{{outline.title||outline.id||outline}}</h4>
+            <span ng-repeat="decision in outline.decisions">
+                <span class="decision" ng-click="selectDecision(decision)" ng-class="{undecided:showUndecided(decision)}">
+                    {{decision.content || showUndecided(decision)}}
+                </span>
+            </span>
+        </div>
+    </div>
+    <annotation-details></annotation-details>
+    <div id="annotationList" class="annoDetails slideRight" ng-show="display.annoList && !selected.annotation" ng-controller="AnnotationListController">
+        <a class="closeBtn" ng-click="hideAnnoList()">x</a>
+        <div class="small w100">Click to toggle</div>
+        <label>Filter by:
+            <button class="smallBtn" ng-class="{hidden:!display.annoByTags}" ng-model="display.annoByTags" ng-click="listByTags()">Tags</button>
+            <button class="smallBtn" ng-class="{hidden:display.annoByTags}" ng-model="display.annoByTags" ng-click="listByTags()">Type</button>
+        </label>
+        <div ng-show="!display.annoByTags" class="fade">
+            <label ng-class="{hidden:hide[choice]}"
+                   ng-repeat="choice in witness.annotations | hideInternals | thisIs:'startPage':selectpage.id|dedup:'type'"
+                   for="{{'hide'+choice}}">
+                <input type="checkbox"
+                       id="{{'hide'+choice}}"
+                       ng-model="hide[choice]"
+                       />{{choice}}
+            </label><label ng-class="{hidden:hide[choice]}"
+                  ng-repeat="choice in witness.annotations | hideInternals | thisIs:'startPage':selectpage.id|dedup:'tags':true"
+                  for="{{'hide'+choice}}">
+            <input type="checkbox"
+                   id="{{'hide'+choice}}"
+                   ng-model="hide[choice]"
+                   />{{choice}}
+            </label>
+        </div>
+        <div ng-show="display.annoByTags" class="fade">
+            <label ng-class="{hidden:hideTag.none}"
+                   for="hideTagnone">
+                <input type="checkbox"
+                       id="hideTagnone"
+                       ng-model="hideTag.none"
+                       />none
+            </label>
+            <label ng-class="{hidden:hideTag[choice]}"
+                   ng-repeat="choice in fullListOfTags"
+                   for="{{'hideTag'+choice}}">
+                <input type="checkbox"
+                       id="{{'hideTag'+choice}}"
+                       ng-model="hideTag[choice]"
+                       />{{choice}}
+            </label>
+        </div>
+<h4>Current Annotations</h4>
+        <ul>
+            <li ng-hide="hide['{{anno.type}}'] || notThisTag(anno.tags,hideTag)"
+                ng-repeat="anno in edition.annotations | thisIs:'startPage':selectpage.id"
+                ng-click="selectAndShow(anno)">{{anno.label || anno.type+", "+anno.id}}</li>
+        </ul>
+<!--        <p class="instructions" ng-hide="witness.annotations | thisIs:'startPage':selected.page.id">
+            No annotations found with these parameters.
+        </p>-->
+    </div>
+</div>
+</div>

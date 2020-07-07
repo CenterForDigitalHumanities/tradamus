@@ -1,0 +1,51 @@
+<nav class="clearfix">
+    <ul class="list-unstyled" ng-hide="nav.current === 'viewPublication'">
+        <li class="btn btn-primary btn-lg pad-tab">
+        <tr-help topic="{{nav.mainHelp}}" message="Learn about Tradamus"></tr-help>
+        <span>help</span>
+        </li>
+        <li>
+            <ul class="list-unstyled">
+                <li class="btn btn-primary btn-lg" ng-class="{active:nav.current === 'dashboard'}">
+                <tr-help topic="Dashboard" ng-show="showHelp"></tr-help>
+                <a href="#/dashboard">Dashboard</a>
+        </li>
+        <li class="btn btn-primary btn-lg" ng-show="edition.id || user.editions" ng-class="{active:nav.current === 'edition'}">
+        <tr-help topic="Edition" ng-show="showHelp"></tr-help>
+        <a href="#/edition/{{edition.id}}">Project</a>
+            </li>
+        <li class="btn btn-primary btn-lg" ng-show="edition.id" ng-class="{active:nav.current === 'material'}">
+        <tr-help topic="Material" ng-show="showHelp"></tr-help>
+        <a href="#/material/{{display.material.id}}">Material</a>
+        </li>
+        <li class="btn btn-primary btn-lg" ng-show="edition.id" ng-class="{active:nav.current === 'draft'}">
+        <tr-help topic="Draft" ng-show="showHelp"></tr-help>
+        <a href="#/draft/{{edition.id}}">Draft</a>
+        </li>
+        <li class="btn btn-primary btn-lg" ng-show="edition.id" ng-class="{active:nav.current === 'publish'}">
+        <tr-help topic="Publish" ng-show="showHelp"></tr-help>
+        <a href="#/edition/{{edition.id}}/publications">Publish</a>
+        </li>
+    </ul>
+</li>
+</ul>
+<div class="caps-label btn btn-primary pull-left" ng-show="nav.current === 'viewPublication'">
+    Viewing Publication
+</div>
+<div class="pull-right btn-group">
+    <button class="btn btn-default" ng-click="openUserForm()" ng-controller="updateUserController">
+        <tr-help topic="edituser" ng-show="showHelp"></tr-help>
+        {{user.name}}
+        <i class="fa fa-user"></i>
+    </button>
+    <button class="btn btn-default" ng-click="toggleHelp()" ng-controller="helpController" tooltip="{{showHelp && 'Hide'||'Show'}} detailed help (F1)">
+        <span class="fa-stack" style="margin: -5px;">
+            <i class="fa fa-question fa-stack-1x fa-lg"></i>
+            <i class="fa fa-ban fa-stack-2x text-danger" ng-show="showHelp"></i>
+        </span>
+    </button>
+    <button class="btn btn-default" ng-click='logout()' title="Logout">
+        <i class="fa fa-sign-out"></i>
+    </button>
+</div>
+</nav>

@@ -1,0 +1,19 @@
+<div ng-controller="witnessFromFileController">
+    <h3>File ⇨ Witness</h3>
+    <a class="closeBtn" ng-click="closeIntraform(file);">x</a>
+    <div ng-show="FileReaderSupported" file-input="file" on-change="previewContent()">
+</div>
+    <button class='smallBtn' ng-click='editing = !editing'>{{editing && "Done Editing" || "Edit File"}}</button>
+    <div ng-switch="textType" class="w100">
+        <button class='smallBtn' ng-switch-when="JSON" ng-click="importWitness()">Submit JSON</button>
+        <button class='smallBtn' ng-switch-when="XML" ng-click="importWitness()">Submit XML</button>
+        <div ng-switch-default="" class="w100" ng-bind-html="textType"></div>
+    </div>
+    <div ng-show="file.content && !editing" class="previewPane hfull w100 text-left overflow-auto" ng-switch="textType">
+        <pre class="w100" ng-switch-when="JSON">{{file.content}}</pre>
+        <pre class="w100" ng-switch-when="XML" ng-bind-html="trust(file.content)"></pre>
+        <pre class="w100" ng-switch-default>{{file.content}}</pre>
+    </div>
+    <textarea class="w100 hfull" ng-show="editing || !file.content" ng-model="file.content" placeholder="Select a file or paste text here" ng-change="textIsType()"></textarea>
+</div>
+

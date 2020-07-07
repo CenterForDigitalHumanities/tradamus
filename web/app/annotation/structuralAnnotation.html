@@ -1,0 +1,72 @@
+<!--Template for selecting or viewing structural annotations used in Edition outlines.-->
+<div class="panel panel-info clearfix">
+    <div class="panel-heading">
+        <h4 class="panel-title">Outline Details</h4>
+    </div>
+    <div class="panel-body">
+        <div ng-if="selected">
+            <div class="form-group clearfix">
+                <label>Segment Label</label>
+                <span ng-show="readonly" class="text-left form-control">{{selected.attributes.label}}</span>
+                <input ng-hide="readonly" type="text" ng-model="selected.attributes.label" placeholder="Segment Label" class="text-left form-control"/>
+            </div>
+            <div class="form-group clearfix">
+                <label>
+                    Start At: <i class="fa" ng-class="{'fa-lock':display.lockStart}"></i>
+                </label>
+                <a class="btn btn-xs btn-default pull-right" ng-click="display.lockStart = null" ng-show="display.lockStart">
+                    <i class="fa fa-undo"></i>
+                    Clear
+                </a>
+                <a class="btn btn-xs btn-default pull-right" ng-click="display.lockStart = {page: selected.startPage, offset: selected.startOffset}" ng-hide="display.lockStart">
+                    <i class="fa fa-unlock"></i>
+                    Set Start
+                </a>
+                <page ng-class="{'text-muted bg-info':display.lockStart}" class="col-xs-12 animate">
+                    {{display.lockStart && incipit(getSelectedText({startPage: display.lockStart.page, startOffset: display.lockStart.offset, endPage: display.lockStart.page, endOffset: undefined})) || incipit(getSelectedText(selected))}}
+                </page>
+            </div>
+            <div class="form-group clearfix">
+                <label>
+                    End At: <i class="fa" ng-class="{'fa-lock':display.lockEnd}"></i>
+                </label>
+                <a class="btn btn-xs btn-default pull-right" ng-click="display.lockEnd = null" ng-show="display.lockEnd">
+                    <i class="fa fa-undo"></i>
+                    Clear
+                </a>
+                <a class="btn btn-xs btn-default pull-right" ng-click="display.lockEnd = {page: selected.endPage, offset: selected.endOffset}" ng-hide="display.lockEnd">
+                    <i class="fa fa-unlock"></i>
+                    Set End
+                </a>
+                <page ng-class="{'text-muted bg-info':display.lockEnd}" class="col-xs-12 animate">
+                    {{display.lockEnd && explicit(getSelectedText({startPage: display.lockEnd.page, startOffset: 0, endPage: display.lockEnd.page, endOffset: display.lockEnd.offset})) || explicit(getSelectedText(selected), true)}}
+                </page>
+            </div>
+            <div class="form-group clearfix">
+                <button class="btn btn-default" ng-click="previewText(getSelectedText({startPage: display.lockStart.page, startOffset: display.lockStart.offset, endPage: display.lockEnd.page, endOffset: display.lockEnd.offset}))" ng-show="display.lockStart && display.lockEnd">Preview</button>
+                <button class="btn btn-default" ng-click="previewText(getSelectedText({startPage: selected.startPage, startOffset: selected.startOffset, endPage: selected.endPage, endOffset: selected.endOffset}))" ng-show="selected.id>0 && !(display.lockStart && display.lockEnd)">Preview</button>
+            </div>
+            <tags-widget item="selected" readonly="{{readonly}}"></tags-widget>
+        </div>
+        <div ng-hide="selected" class="help-block">
+            {{instructions||'Select some text from the page, click on a line, or choose an
+            annotation from the list to get started.'}}
+        </div>
+    </div>
+    <div class="panel-footer col-xs-12" ng-controller="editAnnotationController" ng-hide="readonly || !selected" tooltip='{{(!display.lockStart || !display.lockEnd)&&"Lock both endpoints for this segment to save"||""}}'>
+        <alert ng-show="display.showDelete" type="danger">
+            Delete this structural annotation? This action cannot be undone.
+            <button type="button" class="btn btn-danger" ng-click="deleteAnnotation(selected.id)">
+                <i class="fa fa-trash"></i>
+                Delete
+            </button>
+        </alert>
+        <button class="btn btn-primary" ng-click="updateStructure(selected)" ng-class="{disabled:!display.lockStart || !display.lockEnd}">
+            <i class="fa fa-save"></i>
+            {{selected.id > 0 && "Save Changes"|| "Create Segment"}}
+        </button>
+        <button type="button" class="btn btn-danger pull-right" ng-click='display.showDelete=true'>
+            <i class="fa fa-trash" title="Discard this segment"></i>
+        </button>
+    </div>
+</div>

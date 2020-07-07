@@ -1,0 +1,112 @@
+<div class="panel panel-default">
+    <div class="panel-heading text-center">
+        <h1 class="text-primary">{{publication.title}}
+    </div>
+    <div class="panel-body">
+        <div ng-class="{'col-md-6':!publication.isNew,'col-md-8 col-md-offset-2':publication.isNew}">
+            <alert type="{{display.titleMessage.type||'info'}}" ng-show="display.titleMessage.msg" close="display.titleMessage=null">
+                {{display.titleMessage.msg}}
+            </alert>
+            <form name="updateTitle" ng-submit="saveTitle(publication.title, updateTitle)" class="form-group">
+                <label for='title'>Update title: </label>
+                <input type="text" name="title" placeholder="Entitle this Publication" ng-model="publication.title"
+                       class="form-control input-lg">
+                <button collapse="!updateTitle.$dirty" type="submit" class="btn btn-primary pull-right">
+                    <i class="fa fa-save"></i> save title
+                </button>
+                <small class="help-block" ng-hide="publication.isNew">
+                    Edited by: {{getOwner('name')}}
+                </small>
+            </form>
+            <h2>
+                <span class="badge pull-right">
+                    {{publication.sections.length}}
+                </span>
+                Publication Sections
+                <button ng-click="showEditSections(publication)" class="btn btn-sm btn-default">
+                    <i class="fa fa-edit"></i> edit
+                </button>
+            </h2>
+            <div class="help-block" collapse="publication.sections.length">
+                Add at least one section to <span ng-class="{text:publication.title}">
+                    {{publication.title|| 'this publication'}}</span>. Each section must
+                    include outlines from this Project, which
+                    may be reused as needed.
+                    <div class="input-group">
+                    <input class="form-control" type="text" ng-model="newSect.title" placeholder="Label for new section" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" ng-click="newSection(newSect.title)">
+                            <i class="fa fa-plus"></i> New Section
+                        </button>
+                    </span>
+                </div>
+            </div>
+            <div class="pre-scrollable" ng-show="publication.sections.length">
+                <div class="list-group-item text" ng-repeat="section in sortedSections">
+                    <span class="pull-right badge">{{section.sources.length}}</span>
+                    {{section.title|| section.id&&' untitled '+section.id}}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group" ng-controller="permissionsController">
+                <h2>Access Control
+                    <button ng-click="editPermissionForm(publication.permissions, publication)" class="btn btn-sm btn-default">
+                        <i class="fa fa-edit"></i> edit
+                    </button>
+                </h2>
+                <p class="help-block">{{(publication.permissions|collaborators).length > 1 &&
+            ("You have shared this project with "+((publication.permissions|collaborators).length-1)
+            + " other"+((publication.permissions|collaborators).length === 1&&". "||"s. "))
+            || "No one else is included on this publication."}}
+                </p>
+                <ul class="list-unstyled" ng-show="collaborators.length">
+                    <li ng-repeat="c in collaborators|| getCollaborators(publication.permissions)" title="{{c.mail}}">
+                        <i class="fa fa-user"></i>
+                        {{c.name}},{{c.role}}
+                    </li>
+                </ul>
+                <i class="fa fa-globe"></i> Public access is {{parsePublicRole()}}.
+            </div>
+            <h2>Links</h2>
+            <ul class="list-unstyled">
+                <li>
+                    <label>View as web site:</label>
+                    <p class="help-block"><a class="btn btn-link" target="_blank"
+                                             ng-href="http://tradamus.org/publication.html#/publication/{{publication.id}}">
+                            <i class="fa fa-external-link"></i></a>
+                        http://tradamus.org/publication.html#/publication/{{publication.id}}</p>
+                </li>
+                <li>
+                    <label>Setup for printing:</label>
+                    <p class="help-block"><a class="btn btn-link" target="_blank"
+                                             ng-href="http://tradamus.org/publication.html#/publication/{{publication.id}}/print">
+                            <i class="fa fa-external-link"></i></a>
+                        http://tradamus.org/publication.html#/publication/{{publication.id}}/print</p>
+                </li>
+                <li>
+                    <label>Access JSON Object (publication only):</label>
+                    <p class="help-block"><a class="btn btn-link" target="_blank"
+                                             ng-href="http://tradamus.org/publication.html#/publication/{{publication.id}}/json">
+                            <i class="fa fa-external-link"></i></a>
+                        http://tradamus.org/publication.html#/publication/{{publication.id}}/json</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="panel-footer clearfix text-center">
+        <button class="btn btn-danger btn-sm pull-right" ng-click="discardPublication()">
+            <i class="fa fa-trash"></i> discard
+        </button>
+        <a href="#/edition/{{edition.id}}/publications" class="btn btn-default btn-sm pull-right">
+            <i class="fa fa-globe"></i>
+            change publication
+        </a>
+        <button class="btn-info btn pull-left" ng-click="showShareLinks(publication)" ng-controller="exportController">
+            <i class="fa fa-share-alt"></i>
+            Export/Share
+        </button>
+        <span class="text text-primary">{{publication.title}}</span>
+        <small>{{getOwner('name') + ", Editor"}}</small>
+    </div>
+</div>

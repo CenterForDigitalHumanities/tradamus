@@ -1,0 +1,38 @@
+<div>
+    <button class="pull-right btn btn-danger btn-sm" ng-click="modal.close($event)"><i class="fa fa-close"></i></button>
+    <div class="modal-header">
+        <h3 class="modal-title">{{user.name}} Account Information</h3>
+    </div>
+    <div class="modal-body clearfix">
+        <div class="form-group col-xs-12">
+            <label>Name:</label>
+            <input type="text" ng-model="updating.name" class="form-control" />
+            <label>Email:</label>
+            <input type="email" ng-model="updating.mail" class="form-control" />
+        </div>
+        <div class="form-group col-xs-12">
+            <div class="row">
+                <label class="col-sm-4">Account Created:</label>
+                <span class="col-sm-8">{{updating.creation|date:'shortDate'}}</span>
+            </div>
+            <div class="row">
+                <label class="col-sm-4">Last Login:</label>
+                <span class="col-sm-8">{{updating.lastLogin|date:'mediumTime'}}</span>
+            </div>
+        </div>
+        <div class="form-group clearfix" ng-class="{'has-warning':updating.password !== updating.confirm}">
+            <div  class="col-sm-6">
+                <label>Update Password:</label>
+                <input class="form-control" ng-model="updating.password" type="password" placeholder="Enter New Password" title="Enter New Password" />
+            </div>
+            <div class="col-sm-6">
+                <label>Confirm:</label>
+                <input class="form-control" ng-model="updating.confirm" type="password" placeholder="Enter New Password" title="Enter New Password" />
+            </div>
+            <span class="help-block" ng-show="updating.password !== updating.confirm">Passwords must match.</span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="updateUser(updating)">Save Changes</button>
+    </div>
+</div>

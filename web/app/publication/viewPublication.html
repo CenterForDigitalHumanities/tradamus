@@ -1,0 +1,243 @@
+<div>
+    <header class="col-xs-12">
+        <h1 class="text-primary text-center" ng-hide="longTitle">{{pub.title}}</h1>
+        <h2 class="text-primary text-center" ng-show="longTitle">{{pub.title}}</h2>
+    </header>
+    <div class="col-xs-12">
+        <div class="col-md-4 apparatus text ng-cloak overflow-auto">
+            <div ng-hide="!display.annotation.id"
+                 ng-mouseover="clickedAnno(display.annotation,true)"
+                 class="fast"
+                 pulse-on-change="display.annotation"
+                 ng-controller="textAnnotationController">
+                <!--                Display selected decision or annotation and overlapping annotations-->
+                <div class="panel panel-info">
+                    <div ng-class="{disabled:display.annotation.content.length === 0}"
+                         class="panel-heading lead text-center text-overflow">
+                        <button type="button" ng-click="deselect()" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <span ng-show="display.annotation.type==='tr-decision'">
+                            <span ng-show="display.annotation.content">
+                            &ldquo;{{display.annotation.content}}&rdquo;
+                        </span>
+                        <span ng-hide="display.annotation.content"
+                              class="text-muted">
+                            No content selected
+                        </span>
+                    </span>
+                        <span ng-hide="display.annotation.type==='tr-decision'">
+                            &ldquo;{{getSelectedText(display.annotation)}}&rdquo;
+                    </span>
+                    </div>
+                    <div class="panel-body" style="position:relative">
+                        <div ng-class="{'text-muted':!display.annotation.content}"
+                             ng-hide="display.annotation.type==='tr-decision' || !display.annotation.content.length">
+                            {{display.annotation.content|| "No content"}}
+                            <div collapse="!display.showImages">
+                                <img selector="display.annotation.canvas" width="100%"
+                                     src="data:image/gif;base64,R0lGODlhBAABAIAAAP///////yH5BAEAAAEALAAAAAAEAAEAAAIChFEAOw==">
+                            </div>
+                        </div>
+                        <dl ng-show="display.annotation.type==='tr-decision'">
+                            <dt ng-repeat-start="moteset in display.annotation.motesets || groupMotes(display.annotation)"
+                            ng-click='showWitnessList(moteset.witnesses)'
+                            class="col-sm-4 col-md-3">
+                        {{moteset.sigla.join(', ') || moteset.witnesses.join(', ')}}
+                        </dt>
+                        <dd class="col-sm-8 col-md-9 max-height-15"
+                            ng-class='{"text-primary":moteset.content===display.annotation.content}'
+                            ng-click='showWitnessList(moteset.witnesses)'>
+                            {{moteset.content}}
+                        </dd>
+                        <div ng-repeat-end class="max-height-15 col-xs-12"
+                             collapse="!display.showImages"
+                             ng-repeat="mote in moteset.motes">
+                            <span class="corner-tag label label-primary">{{moteset.sigla[$index]}}</span>
+                            <img selector="mote.canvas" width="100%"
+                                 src="data:image/gif;base64,R0lGODlhBAABAIAAAP///////yH5BAEAAAEALAAAAAAEAAEAAAIChFEAOw==">
+                        </div>
+                        </dl>
+                    <tags-list item="display.annotation" class="col-xs-12 form-group"></tags-list>
+                    <accordion class="clearfix text-left" ng-show="display['overlap'+display.annotation.id].length">
+                        <accordion-group>
+                    <accordion-heading>
+                        Overlapping Annotations <span class="badge">
+                            {{getAllOverlapping(display.annotation).length}}
+                        </span>
+                    </accordion-heading>
+                            <div ng-repeat="a in display['overlap'+display.annotation.id]" anno-id="{{a.id}}"
+                                 class="annotation list-group-item col-xs-12 text-overflow"
+                                 ng-click="clickedAnno(a)">
+                                {{a.content||a.type+": "+a.id}}
+                            </div>
+                </accordion-group>
+            </accordion>
+                    <button class="btn btn-default" ng-click='attachComment(display.annotation)'>Comment <i class="fa fa-comment"></i></button>
+                    <div ng-if="display.annotation.modifiedBy" class="corner-tag" tooltip='{{display["attribution"+display.annotation.id]||getUsername(display.annotation.modifiedBy)}}'>
+                        <i class="fa fa-image" ng-click="display.showImages=!display.showImages"
+                           ng-show="display.annotation.canvas"
+                           ng-class="{'text-primary':display.showImages}"></i>
+                        <i class='fa fa-user'></i>
+                    </div>
+                    </div>
+            </div>
+            </div>
+            <div ng-repeat="app in pub.noteSections|orderBy:'index'"
+                 ng-show="sharedSources(app.sources,display.section.sources)"
+                 class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-overflow">{{app.title}}</h3>
+                </div>
+                <div class="panel-body">
+                    <outline ng-repeat="o in sharedSources(app.sources,display.section.sources)|orderBy:'index'">
+                        <div ng-repeat="a in sortedAnnos(outlines['id'+o].annotations.concat(outlines['id'+o].decisions),annotations)"
+                             ng-hide="getRules(a,app.layout).indexOf('none')+1"
+                             anno.id="a.id"
+                             class="annotation list-group-item text-overflow cursor-pointer"
+                             ng-class="{'active':a === display.annotation}"
+                             ng-mouseover="clickedAnno(a,true)"
+                            ng-click="clickedAnno(a)">
+                            <tags-list item="a" class="pull-right" readonly ng-if="!a.content.length"></tags-list>
+                            <strong>{{a.attributes.label||$index}}</strong>
+                            <span style="{{getRules(a,app.decoration.concat(app.layout))}}">
+                                {{a.content}}
+                            </span>
+                        </div>
+                    </outline>
+                </div>
+                        </div>
+        </div>
+        <div class="col-md-6 reading" format>
+            <div ng-controller="editionTranscriptionController" class="editionTranscription">
+                <div class="col-xs-12" ng-hide="pub.textSections.length===1">
+                    <button class="btn btn-default"
+                            ng-click="selectSection(display.section.index-1)"
+                            ng-class="{invisible:display.section.index===0||getSectionByIndex(display.section.index-1,'TEXT').index>=display.section.index}">
+                        <i class="fa fa-chevron-left"></i>
+                        {{getSectionByIndex(display.section.index-1,'TEXT').title}}
+                    </button>
+                    <button class="btn btn-default"
+                            ng-click="selectSection(display.section.index+1)"
+                            ng-class="{invisible:display.section.index===pub.textSections.length-1||getSectionByIndex(display.section.index-1,'TEXT').index<=display.section.index}">
+                        {{getSectionByIndex(display.section.index+1,'TEXT').title}}
+                        <i class="fa fa-chevron-right"></i>
+                    </button>
+                </div>
+                <page class="overflow-auto col-xs-12 ng-cloak text" ng-class="movingSection">
+                    <h3 id="section{{display.section.index}}">{{display.section.title}}</h3>
+                    <outline class="outlines"
+                             ng-init="outline=outlines['id'+o]||getOutlines(display.section.sources)"
+                             ng-repeat="o in display.section.sources|orderBy:'index'">
+                        <decision ng-if='outline.bounds.length === 1'
+                                  bound-id='{{outline.bounds[0].id}}'
+                                  id="d{{outline.bounds[0].id}}"
+                                  class='edition line'>{{getBoundedText(outline.bounds[0], true)}}</decision>
+                        <decision ng-repeat="decision in outline.decisions"
+                                  class="decision line edition animate"
+                                  id="d{{decision.id > -1 && decision.id||'new'}}"
+                                  decision-complete='{{decision.content.length > 0}}'
+                                  ng-class="{
+                                      'alert-info':decision===display.annotation,
+                                'text-muted':!decision.content,
+                                'text-primary':!isChosen(decision.content,showUndecided(decision,display.baseText))}"
+                                ng-click="clickedAnno(decision)"
+                                bounce-on-change='showUndecided(decision,display.baseText)'
+                                style="{{getRules(decision,display.section.decoration.concat(display.section.layout),true)}}"
+                                ng-bind="showUndecided(decision,display.baseText)"
+                                ></decision>
+                    </outline>
+                </page>
+                <div class="tall">
+                    <!--spacer for scroll-->
+                </div>
+                        </div>
+        </div>
+    <div class="col-md-2 apparatus text ng-cloak overflow-auto">
+        <div class="controls panel panel-info" ng-controller="viewPublicationController">
+            <div class="panel-body">
+                <div class="form-group" ng-show="hasVariants(display.section.sources)">
+                    <label>Read As:</label>
+                    <select class="form-control"
+                        ng-model="display.baseText"
+                        ng-change="resetDefaults(display.baseText)"
+                        ng-options="materials['id'+m].siglum for m in edition.witnesses">
+                </select>
+                <span class="help-block" ng-show="display.baseText">
+                    <span class="text-primary">
+                        <i class='fa fa-info-circle'></i>
+                        Marked text
+                    </span> varies from the Editor's decision.
+                </span>
+            </div>
+                <div class="form-group" ng-hide="annotationTypes().length===1">
+                    <label>Types</label>
+                <select class='form-control'
+                        ng-model='byType'
+                        ng-change='highlightThese("type")'
+                        ng-options='type for type in annotationTypes()'>
+                </select>
+                <div class="help-block" ng-show="byType && byType!=='Show default'">
+                    <span class="byTypeHelper label">
+                            <i class='fa fa-info-circle'></i>
+                        {{byType}}</span>
+                <button class='btn btn-xs btn-default' ng-click='listAnnos("type")'>Show List<span class="badge">{{theseAnnos("type").length}}</span></button>
+                </div>
+            </div>
+                <div class="form-group" ng-hide="annotationTags().length===1">
+                    <label>Tags</label>
+                <small class="alert-info help-block" ng-hide="annotationTags().length">
+                    <i class="fa fa-info-circle pull-left"></i>
+                    No tagged annotations in this section.
+                </small>
+                <select class='form-control'
+                        ng-show="annotationTags().length"
+                        ng-model='byTags'
+                        ng-change='highlightThese("tags")'
+                        ng-options='type for type in annotationTags()'>
+                </select>
+                <span class="help-block" ng-show="byTags && byTags!=='Show default'">
+                    <span class="byTagHelper label">
+                        <i class='fa fa-info-circle'></i>
+                        {{byTags}}</span>
+                    <button class='btn btn-xs btn-default' ng-click='listAnnos("tags")'>Show List<span class="badge">{{theseAnnos("tag").length}}</span></button>
+                </span>
+            </div>
+                <button class="btn btn-default" ng-click='resetDefaults()'>Reset Defaults</button>
+            </div>
+        </div>
+        <div class="indices" ng-show="pub.indexSections.length">
+            <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Indexes
+                </h3>
+            </div>
+                <div class="panel-body">
+                    <button ng-repeat="index in pub.indexSections|orderBy:'index'"
+                            class="btn btn-primary form-control"
+                            ng-show="sharedSources(index.sources,display.section.sources).length"
+                            style="{{getRules(a,index.layout)}}"
+                            tooltip="{{index.title}}"
+                            ng-click="showIndex(index)">
+                        {{index.title}}
+                        <span class="badge">
+                            {{visibleAnnotations(display.section).length}}
+                        </span>
+                    </button>
+                </div>
+        </div>
+        </div>
+    </div>
+    </div>
+
+
+<footer class="col-xs-12">
+        <div ng-controller="authController">
+            Logged in as: {{user.name}}
+            <button class="btn-xs btn btn-default" ng-click="logout()">
+                <i class="fa fa-sign-out"></i>
+                Logout
+            </button>
+        </div>
+    </footer>
+
+</div>

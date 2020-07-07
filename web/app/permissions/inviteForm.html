@@ -1,0 +1,20 @@
+<div>
+    <div class="modal-header">
+        <h3 class="modal-title">
+            Invite New Tradamus User
+        </h3>
+    </div>
+    <div class="modal-body">
+        <p class="alert alert-warning">No user was found in the Tradamus roles with
+            {{collaborator.mail}}. Enter a name below to send a personal invitation
+            to join this project on Tradamus or cancel to try again.</p>
+        <form ng-submit="invite(collaborator)" name="inviteForm" id="inviteForm">
+            <div class="form-group" ng-class="{'has-error':inviteForm.$invalid}">
+                <label for="user">Name</label>
+                <input class="form-control" type="text" placeholder="Enter Full Name" ng-model="collaborator.name" min="1">
+                <button class="btn btn-primary" type="submit"><i class="fa fa-envelope"></i> Send Invite to {{collaborator.mail}}</button>
+                <button class="btn btn-danger" type="reset" ng-click="modal.close()"><i class="fa fa-close"></i> Cancel</button>
+            </div>
+            </form>
+    </div>
+</div>

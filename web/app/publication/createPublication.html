@@ -1,0 +1,25 @@
+<form name="createPublicationForm" ng-submit="createPublication()">
+    <div class="modal-header">
+        <button ng-click="modal.close()" class="btn btn-danger pull-right"
+                type="button">
+            <i class="fa fa-close"></i>
+        </button>
+        <h3 class="modal-title text-primary">Start a new Publication</h3>
+    </div>
+    <div class="modal-body clearfix">
+        <div class="form-group col-xs-12 col-md-8 col-md-offset-2">
+            <label>Title</label>
+            <input ng-model="publicationForm.title"
+                   class="form-control input-lg" type="text"
+                   placeholder="Entitle the new publication">
+            <input ng-model="publicationForm.type"
+                   value="DYNAMIC"
+                   type="hidden">
+        </div>
+    </div>
+        <div class="modal-footer clearfix">
+            <button type="submit" class="btn btn-primary pull-right">
+                <i class="fa fa-plus"></i> Create New Publication
+            </button>
+    </div>
+</form>

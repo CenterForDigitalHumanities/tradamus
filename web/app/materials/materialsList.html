@@ -1,0 +1,29 @@
+<div class="panel-default">
+    <div class="panel-heading text-center">
+        <h1 class="text-primary">Choose a Material</h1>
+    </div>
+    <div class="panel-body" ng-controller="materialsController">
+        <alert type="info" ng-hide="hasKeys(materials)">
+            You have no projects started.
+            <button ng-click="editMaterialForm(materials)" class="btn btn-sm btn-default">
+                <i class="fa fa-edit"></i> Add Material
+            </button>
+        </alert>
+        <div>
+            <alert ng-hide="hasKeys(materials)" type="info">
+                There are no attached materials.
+            </alert>
+            <ul class="list-unstyled col-xs-12 col-md-8 col-md-offset-2" ng-show="hasKeys(materials)">
+                <li ng-repeat="m in materials" title="{{m.title}}" class="text-overflow text">
+                    <a href="#material/{{m.id}}" class="btn btn-default list-group-item clearfix">
+                        <b class="col-xs-2 text-overflow">{{m.siglum}}</b>
+                        <span class="col-xs-10">
+                            <i class="fa fa-book"></i>
+                        {{ m.title || 'untitled' }}
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

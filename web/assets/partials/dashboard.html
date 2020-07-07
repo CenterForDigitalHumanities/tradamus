@@ -1,0 +1,98 @@
+<div id="dashboard"> <!-- DashboardCtrl -->
+    <site-matrix></site-matrix>
+    <div id="objectLabel" ng-mouseover="broadcast('show-matrix')">Dashboard<help></help></div>
+    <section id='updates' class='col2 right' data-ng-show="user.activity" >
+    <header>
+      Activity
+    </header>
+    <ul class="sectionBody">
+      <loader for='userActivity'></loader>
+      <li data-ng-repeat="entry in user.activity | orderBy:time:true">
+        {{entry.time | date:'short'}}
+        {{entry.operation | lowercase}}
+        {{entry.entity.substring(0,entry.entity.lastIndexOf("/"))}}
+        <span class="text">{{formatLogContent(entry.content)}}</span>
+      </li>
+    </ul>
+  </section>
+  <section data-ng-show="user.id && !user.editions.length" class="col2 hhalf" id="intro">
+    <header>Getting Started with Tradamus</header>
+    <div class="sectionBody">
+      <p class="text">Welcome to <em>Tradamus</em>, a suite of tools for the creation and publication of scholarly editions. The power of digital data and the new possibilities in editorial assertion and annotation can be overwhelming at first, but it is a worthwhile effort.</p>
+      <p class="text">To begin, click the <a class="actionable inline" href="#edition/new" title="Start a New Project">+ Create</a> link in "Your Projects". If you get lost at any point, just press F1 or look for the <help></help> button.</p>
+    <p class="small">Read more: <a href="#" class="inline">Tradamus</a>, <a href="#" class="inline">Center for Digital Humanities</a>, or <a href="#" class="inline">Digital Standards for Scholarship</a></p>
+    </div>
+  </section>
+  <section data-ng-show="user.id" class="right" id="yourEditions">
+    <header>
+        Your Projects
+    </header>
+    <div class="sectionBody">
+        <a class="actionable w40 right" href="#edition/new" title="Start a New Project">+ Create</a>
+        <select data-ng-model="sort" data-ng-show="user.editions" class="w60">
+        <option value="">Sort by:</option>
+        <option value="title">A-Z</option>
+        <option value="sortEditionsRecent()">Recently Updated</option>
+        <option value="['creator','title']">My Role</option>
+      </select>
+      <loader for='userEditions'></loader>
+      <p data-ng-show="!user.editions.length">
+          You have no projects started.
+          <!--        Maybe some information about Tradamus
+                      or how to get started would be helpful here? Perhaps just clicking
+                    the link above is sufficient.-->
+      </p>
+        <ul class="scroll" style="height:15.5em;">
+          <li data-ng-repeat="ed in user.editions | orderBy:sort"><a href="#edition/{{ed.id}}">{{ ed.title || 'untitled' }}</a></li>
+        </ul>
+      </div>
+    </section>
+  <section id="actions">
+    <a class="actionable tile">Bookmarks</a>
+    <a class="actionable tile">Public Projects</a>
+    <div class="accountBandPre">{{user.lastLogin | date:'short'}}</div>
+    <!--      <a class="accountBand" title="{{user.lastLogin | date:'short'}}">{{user.name}} - edit</a>-->
+  </section>
+    <!--    <section id='bookmarks' class="disabled">
+            <header>
+              Bookmarks
+          </header>
+      <div class="sectionBody">
+        <a href='index.html' title='Get to it!'>
+            You were confirming automatic collations.
+        </a>
+      </div>
+    </section>
+    <section id='publicEditions' class="disabled">
+        <header>
+            Public Editions
+        </header>
+        <ul class="sectionBody">
+            <li title="Some Public Project: Not really a project">Some Public Project</li>
+            <li title="Norman Anonymous: This goes nowhere">Norman Anonymous</li>
+            <li title="So on and So Forth: Such and such">So on and So Forth</li>
+            <li title="A Brief History of Thyme: an herbaceous exploration">A Brief History of Thyme</li>
+        </ul>
+      </section>-->
+    <!--<section id='account'>
+            <header>
+            Your Account
+        </header>
+            <div class="sectionBody">
+        <figure id='avatar'>
+            <img alt='avatar' src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAuCAMAAABgZ9sFAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJlQTFRF0tLSy8vLzs7O09PTwcHB0NDQ1NTUxMTEx8fHz8/P0dHRzMzMzc3Nw8PDysrKycnJyMjIxcXFvLy88fHxxsbG1dXV/Pz819fX6enp6Ojourq6+/v79PT04uLi39/fu7u7ubm59vb2+vr62tra29vb9fX13Nzc4+Pj+Pj45ubm3d3d5OTk5+fnwsLCwMDAv7+/vb29vr6+////L9uoVgAAASNJREFUeNrk1Ml2gzAMQFEZAylDgZoyJIwhc9oAzv9/XJMuKHYTGc7prm99tZME11nB/+bxZ+L79COexOODo0EUgeUcYjXfUcuMvjMtulPx2AVzCNxYwc/UHEXPCm5TIRvnOYgccpSHIBX+KbelFNyQwvlR5keUJ5ZUgnJPk/JQrv0K5dSVoijfOlJblJ+I1AnlWSnqMsM3MveEctU1Gf4oQ3l8RTCqUPKMvAyRTP0Jih9eTHgc5vuQqeZ7/W1I36t42i1GdSnK15QthBhdP+WpVvNXKV5r6SO+BLbilwfxFYOlyO+21y9P0vth4sabTVWzVkdrWV1tmjtveNW1E+oqvr7xgLcT48EVQtZNjoVQdjMqIeEzSoDM4QRIP6O5/EuAAQD08ETbtk814AAAAABJRU5ErkJggg==" />
+            <figcaption>{{user.name}}</figcaption>
+        </figure>
+        <div>Last Login: <strong><time datetime="{{security.user.lastLogin}}">{{user.lastLogin | date:'short'}}</time></strong></div>
+        <div>
+          <button type="button" ng-hide="updating.visible" ng-click="updating.visible = true;">Change Password</button>
+          <input ng-model="updating.password" type="password" ng-show="updating.visible" placeholder="Enter New Password" title="Enter New Password" />
+          <button type="button" ng-show="updating.visible" ng-click="updateUser();">Save Password</button>
+            <button type="button" ng-show="updating.visible" ng-click="updating.visible = false;">Cancel Changes</button>
+            <button type="button" ng-disabled="true">User Reports</button>
+            <button type="button" ng-disabled="true">Update User Info</button>
+        </div>
+            </div>
+        </section>-->
+    <foot-tag></foot-tag>
+</div>

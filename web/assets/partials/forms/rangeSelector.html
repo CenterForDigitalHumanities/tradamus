@@ -1,0 +1,47 @@
+<div ng-controller="rangeSelectorController">
+    <a class="closeBtn" ng-click="close()">&times;</a>
+    <p class="instructions">
+        Select a witness and a page, then highlight the text to select the beginning
+        and end of your segment. You may filter the text by annotation type, if it
+        helps. This segment will be added to your collation group which currently has
+        {{content.collator.length|| "no" + " segment" + (content.collator.length !== 1 && "s" || "")}}.
+    </p>
+    <label title="Segments must begin and end in a single Witness">Witness:
+        <select ng-model="selected.witness"
+                ng-disabled="newCollator.witness"
+                ng-options="w.title for w in edition.witnesses">
+        </select></label>
+    <div ng-if="selected.witness">
+        <label>Pages:
+            <select ng-model="selected.page"
+                    ng-options="p.title for p in selected.witness.transcription.pages">
+            </select></label>
+        <label ng-if="selected.page">Break on:
+            <select ng-model="selected.breakOn"
+                    ng-change="rebuildText()"
+                    ng-options="a for a in annotations |pageOrFollowing:selected.page.id:'endPage' | dedup:'type'">
+            </select></label>
+        <div class="pageLike hhalf page" annotate-text data-page-id="{{selected.page.id}}">
+            <div ng-repeat="line in brText track by $index"
+                 ng-show="brText"
+                 class="line"
+                 data-line-id="{{line.id}}">{{line.text}}</div>
+            <div ng-hide="brText"
+                 class="line">{{selected.page.text}}</div>
+        </div>
+        <div ng-show="selected.annotation">
+            <label class="left"><a class="smallBtn" ng-click="lockIn('start')" ng-hide="newCollator.startPage>0">Store</a>
+                <a class="smallBtn" ng-click="lockIn('start',true)" ng-show="newCollator.startPage>0">Clear</a>
+                Starts At:
+                <span class="text" ng-class="{faded:!newCollator.startPage>0}">{{newCollator.startText || bookendText(1)}}</span>
+            </label>
+            <label class="left clear">
+                <a class="smallBtn" ng-click="lockIn('end')" ng-hide="newCollator.endPage>0">Store</a>
+                <a class="smallBtn" ng-click="lockIn('end',true)" ng-show="newCollator.endPage>0">Clear</a>
+                Ends At:
+                <span class="text" ng-class="{faded:!newCollator.endPage>0}">{{newCollator.endText || bookendText(-1)}}</span>
+            </label>
+            <button ng-click="saveCollator()" ng-class="{disabled:!newCollator.endText.length || !newCollator.startText.length}">Save This Segment</button>
+        </div>
+    </div>
+</div>

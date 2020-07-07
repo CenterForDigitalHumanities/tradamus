@@ -1,0 +1,113 @@
+<div>
+    <button class="pull-right btn btn-danger btn-sm" ng-click="modal.close()" tooltip='(esc)'><i class="fa fa-close"></i></button>
+    <div class="modal-header">
+        <h3 class="modal-title">Edit Metadata for <span class="text">{{item.label||item.title||"item"}}</span>
+            <tr-help topic="Description" message="Learn more about metadata"></tr-help>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div ng-class="{'col-xs-12':display.fullscreen,'col-sm-6':!display.fullscreen}" class="animate">
+            <tr-help class='pull-left' topic="editkey" ng-show="showHelp"></tr-help>
+            <form class="input-group" ng-submit="addMetadata(editing, $event)" ng-controller="metadataController">
+                <input class="form-control text-overflow" required ng-model="editing.type" type="text" id="type" placeholder="type or context">
+                <span class="input-group-addon">:</span>
+                <input class="form-control text-overflow" required ng-model="editing.content" type="text" id="content" placeholder="content or URI">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fa fa-plus" title="Add to metadata" ng-hide="editing.id"></i>
+                        <i class="fa fa-floppy-o" title="Update this entry" ng-show="editing.id"></i>
+                    </button>
+                </span>
+            </form>
+            <ul class="list-unstyled pre-scrollable">
+                <alert ng-hide="item.metadata.length" type="info">
+                    There is no metadata description.
+                </alert>
+                <li ng-repeat="m in item.metadata" class="list-group-item text-overflow animate" ng-class="{active:m===editing.id,'list-group-item-danger':annotations['id'+m].deleting}">
+                    <div class="btn-group-sm col-xs-offset-3 position-absolute" ng-show="annotations['id'+m].deleting">
+                        <button class="btn btn-danger" ng-click="removeMetadata(m)">
+                            Confirm
+                            <i class="fa fa-trash"></i></button>
+                        <button class="btn btn-primary col-xs-offset-2" ng-click="cancelDelete(m)">Cancel</button>
+                    </div>
+                    <div class="pull-right btn-group btn-group-xs" ng-hide="annotations['id'+m].deleting">
+                        <button class="btn btn-default" ng-click="editMetadata(annotations['id'+m])"><i class="fa fa-edit"></i></button>
+                        <button class="btn btn-danger" ng-click="annotations['id'+m].deleting=true"><i class="fa fa-trash"></i></button>
+                    </div>
+                    <strong title="{{annotations['id'+m].type}}">{{adjustLabel(annotations['id'+m].type,display.fullscreen)}}</strong> : <span title="{{annotations['id'+m].content}}">{{annotations['id'+m].content}}</span>
+                </li>
+            </ul>
+            <button class="btn btn-default" ng-click="display.fullscreen=!display.fullscreen" ng-hide="metadata.preview">
+                <i class="fa fa-expand" ng-class="{'fa-compress':display.fullscreen}"></i>
+            </button>
+        </div>
+        <div class="col-sm-6 animate" ng-hide="display.fullscreen" text-import="metadata">
+            <tr-help class='pull-left' topic="importjsoncsvxml" ng-show="showHelp"></tr-help>
+            <form name="importText" id="importText">
+                <div class="btn-group-justified btn-group">
+                        <label class="btn btn-default" ng-model="inputType" btn-radio="'link'">
+                            <i class="fa fa-external-link"></i> Link</label>
+                        <label class="btn btn-default" ng-model="inputType" btn-radio="'file'">
+                            <i class="fa fa-file-code-o"></i> File</label>
+                    </div>
+                    <div collapse="inputType==='file'">
+                        <label>Link URI:</label>
+                    <div class="input-group input-group-lg">
+                        <input type="url" ng-model="link" class="form-control" placeholder="Import a remote URI" >
+                        <span class="input-group-btn">
+                            <button type="button" ng-click="resolveURI(link)" class="btn btn-primary">
+                                <i class="fa fa-link"></i></button>
+                        </span>
+                    </div>
+                    </div>
+                    <div collapse="inputType==='link'">
+                        <label>Browse to File:</label>
+                        <div ng-show="FileReaderSupported" file-input="file"
+                             on-change="previewContent()"
+                             class="form-control input-lg"
+                             ></div>
+                    </div>
+                    <textarea ng-model="newData.input"
+                              placeholder="Paste JSON, CSV, or XML here"
+                              rows="12"
+                              class="form-control"></textarea>
+            </form>
+            <tr-help class='pull-left' topic="Preview" ng-hide="importText.$pristine" ng-show="showHelp"></tr-help>
+            <button ng-hide="importText.$pristine" type="button" class="btn btn-primary" ng-click="updatePreview()">
+                Preview Changes
+            </button>
+        </div>
+        <div class="position-absolute animate" ng-class="{'col-xs-12':display.fullscreen,'col-sm-6':!display.fullscreen}" ng-show="newData.preview && importText.$pristine" ng-controller="textInputController">
+            <div class="panel panel-info drop-shadow">
+                <button class="btn btn-xdefaus btn-default close" ng-click="importText.$setDirty()">
+                    <i class="fa fa-close"></i>
+                </button>
+                <div class="panel-heading">
+                    <h4 class="panel-title">Organize Data</h4>
+                </div>
+                <div class="panel-body pre-scrollable">
+                    <div ng-hide="newData.isObj">
+                        <p ng-bind-html="newData.textType" class="alert alert-warning"></p>
+                        {{newData.preview}}
+                    </div>
+                    <div ng-if="newData.isObj">
+                        <div object-tree parent="newData.preview" fullscreen="display.fullscreen">Object interface failed to load.</div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="btn-group pull-right" ng-show="newData.isObj">
+                        <button class="btn btn-primary" ng-click="commitEdits(newData.preview,display.fullscreen)">
+                            <i class="fa fa-edit"></i> Edit these
+                        </button>
+                        <button class="btn btn-primary" ng-click="addMetadata(newData.preview)">
+                            <i class="fa fa-save"></i> Add these</button>
+                    </div>
+                    <button class="btn btn-default" ng-show="newData.isObj" ng-click="display.fullscreen=!display.fullscreen">
+                        <i class="fa fa-expand" ng-class="{'fa-compress':display.fullscreen}"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>

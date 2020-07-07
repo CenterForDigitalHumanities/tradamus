@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context antiJARLocking="true" path="/Tradamus">
+   <Resource auth="Container"
+             type="javax.sql.DataSource"
+             driverClassName="com.mysql.jdbc.Driver"
+             maxActive="100" maxIdle="30" maxWait="10000"
+             name="jdbc/Tradamus"
+             username="cdh_w_user" 
+             password="jSs4pVbE3IOcLMaVBZuH"
+             useUnicode="true"
+             characterEncoding="UTF-8"
+             autoReconnect="true"
+             validationQuery="select 1"
+             url="jdbc:mysql://165.134.156.150:3306/tradamus"/>
+   <Resource name="mail/Tradamus" auth="Container"
+    type="javax.mail.Session"
+    mail.smtp.host="smtp.gmail.com"
+    mail.smtp.port="465"
+    mail.smtp.auth="true"
+    mail.smtp.user="tradamus.test@gmail.com"
+    password="FoobusBarus"
+    mail.from="Tradamus Test &lt;tradamus.test@gmail.com>"
+    mail.smtp.starttls.enable="true"
+    mail.smtp.socketFactory.class="javax.net.ssl.SSLSocketFactory"
+    />
+    <Environment name="tpen" value="http://localhost:8080/TPEN" type="java.lang.String" override="false"/>
+</Context>
+
+<!-- This is the one that was from Sam's fix on dev server 4/27/16 -->
+<!--
+
+<Context antiJARLocking="true" path="/Tradamus">
+    <Resource auth="Container" autoReconnect="true" characterEncoding="UTF-8" driverClassName="com.mysql.jdbc.Driver"
+   maxActive="100" maxIdle="30" maxWait="10000" name="jdbc/Tradamus" password="jSs4pVbE3IOcLMaVBZuH" type="javax.sql.DataSource"
+  url="jdbc:mysql://165.134.156.150:3306/tradamus" useUnicode="true" username="cdh_w_user" validationQuery="select 1"/>
+    <Resource auth="Container" mail.from="Tradamus Test &lt;tradamus.test@gmail.com&gt;" mail.smtp.auth="true" mail.smtp.host="smtp.gmail.com" mail.smtp.port="465"
+   mail.smtp.socketFactory.class="javax.net.ssl.SSLSocketFactory" mail.smtp.starttls.enable="true" mail.smtp.user="tradamus.test@gmail.com"
+  name="mail/Tradamus" password="FoobusBarus" type="javax.mail.Session"/>
+  <Environment name="tpen" override="false" type="java.lang.String" value="http://t-pen.org/TPEN"/>
+</Context>
+
+-->

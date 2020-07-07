@@ -1,0 +1,25 @@
+<div ng-controller="editPublicationController" ng-class="{pagebreak:pagebreak(section.index)}" class="clearfix">
+    <div class="ng-cloak" style="font-size: 1.68rem;">
+        <h3 id="section{{section.index}}">{{section.title}}</h3>
+        <outline class="outlines"
+                 ng-init="outline = outlines['id' + o] || getOutlines(section.sources)"
+                 ng-repeat="o in section.sources">
+            <decision ng-if='outline.bounds.length === 1'
+                      bound-id='{{outline.bounds[0].id}}'
+                      class='edition line'>{{getBoundedText(outline.bounds[0], true)}}
+                <foot-note annotation="outline.bounds[0].id"></foot-note>
+            </decision>
+            <decision ng-repeat="decision in outline.decisions"
+                      class="decision line edition animate"
+                      id="d{{decision.id > - 1 && decision.id||'new'}}"
+                      style="{{getRules(decision, section.decoration.concat(section.layout))}}"
+                      >{{decision.content}}
+                <!--TODO: Insert superscripts for other annotations-->
+                <foot-note annotation="decision.id"></foot-note>
+            </decision>
+        </outline>
+    </div>
+    <div class="tall">
+        <!--spacer for scroll-->
+    </div>
+</div>

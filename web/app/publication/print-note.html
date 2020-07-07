@@ -1,0 +1,20 @@
+<div ng-controller="viewPublicationController" class="clearfix">
+    <h4>{{section.title}}</h4>
+    <input type="text" ng-model="display['prefixes'][section.index]"
+           class="input-sm pull-right hidden-print" placeholder="prefix"
+           size="1" maxlength="1"
+           ng-change="updateNotes(printAnnotations(section),section)" />
+    <span ng-repeat="a in printAnnotations(section)"
+          ng-init="display['note' + a.id][section.index] = ($index + 1)"
+          annotation-id="{{a.id}}">
+        {{display['prefixes'][section.index] + ($index + 1)}}.
+        <span class="variant" ng-if="a.type==='tr-decision'">
+            {{a.content}}]
+            <span ng-repeat="(action,content) in variantType(a)"><i ng-if="action!=='variant'">{{action}}</i>{{content}}</span>
+            {{commentOn(a)}}
+        </span>
+        <span class="annotation" ng-if="a.type!=='tr-decision'">
+        {{a.content}}
+        </span>
+    </span>
+</div>

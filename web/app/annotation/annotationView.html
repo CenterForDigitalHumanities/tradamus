@@ -1,0 +1,33 @@
+<div>
+    <button class="pull-right btn btn-danger btn-sm" ng-click="modal.close()"><i class="fa fa-close"></i></button>
+    <div class="modal-header">
+        <h3 class="modal-title">View Annotations
+            <button class="btn btn-link" title="Learn more about annotations" ng-controller="helpController" ng-click="help('annotations')"><i class="fa fa-question-circle"></i></button>
+        </h3>
+    </div>
+    <div class="modal-body clearfix">
+        <div class="col-xs-12 btn-group">
+            <label class="btn btn-primary" ng-model="listBy" btn-radio="'type'">View Types</label>
+            <label class="btn btn-primary" ng-model="listBy" btn-radio="'tags'">View Tags</label>
+        </div>
+        <div class="btn-group btn-group-sm col-xs-12">
+            <label class="btn btn-default" ng-model="display['showTypes'+a]"
+                   btn-checkbox ng-hide="listBy==='tags'"
+                   ng-repeat="a in display.annoTypes">
+                {{a}}</label>
+            <label class="btn btn-default" ng-model="display['showTags'+a]"
+                   btn-checkbox ng-show="listBy==='tags'"
+                   ng-repeat="a in annoTags">
+                {{a}}</label>
+        </div>
+        <div class="col-xs-12 max-height-30">
+            <div ng-repeat="a in theseAnnotations" class="animate height"
+                 ng-show="(listBy==='type'&& display['showTypes'+a.type]) || (listBy==='tags'&&hasTag(a,display.showTags))">
+                <span class="label label-tag" title="/annotation/{{a.id}}">
+                    {{a.attributes.label || a.type}}</span>
+                {{a.content||"/annotation/"+a.id}}
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer"></div>
+</div>

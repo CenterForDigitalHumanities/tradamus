@@ -1,0 +1,104 @@
+<header><h3>Compose Draft</h3></header>
+<div class="w40 left hfull">
+    <h4>Work with witnesses</h4>
+    <dl>
+        <dt><a ng-class="{active:compose.option === 'new witness'}" ng-click="composeChoice('new witness')">Attach a new witness</a></dt>
+        <dd>Import individual witnesses from a T-PEN project or created manually from XML, JSON, or text files. If you have a non-digital witness, add it here and you can reference it as needed.</dd>
+        <dt><a ng-class="{active:compose.option === 'annotate witness'}" ng-click="composeChoice('annotate witness')">Annotate a witness</a></dt>
+        <dd>Enrich imported XML tags, add structural annotation, or use tools to mark specific text or image regions. These annotations can be exposed in your final publication for editorial support.</dd>
+        <dt><a ng-class="{active:compose.option === 'read witness'}" ng-click="composeChoice('read witness')">Read a witness</a></dt>
+        <dd>Use a simple viewer interface to preview a witness or expand it with more images or text.</dd>
+    </dl>
+    <h4>Build your draft</h4>
+    <dl>
+        <dt><a ng-class="{active:compose.option === 'draft text'}" ng-click="composeChoice('draft text')">Compose draft text</a></dt>
+        <dd>Start making editorial decisions to organize the text that will appear in your publications.</dd>
+        <dt><a ng-class="{active:compose.option === 'annotate draft'}" ng-click="composeChoice('annotate draft')">Annotate this draft</a></dt>
+        <dd>Make annotations on text ranges within your draft that are automatically connected to the text and images available in the contributing witnesses.</dd>
+        <!--        <dt><a ng-class="{active:compose.option === 'add comment'}" ng-click="composeChoice('add comment')">Attach commentary or top-level annotations</a></dt>
+                <dd>Create or import text, images, or files that can serve as prologue, commentary, or appendices.</dd>-->
+        <dt class="disabled"><a ng-class="{active:compose.option === 'thinking'}" ng-click="composeChoice('thinking')">Thinking tools</a></dt>
+        <dd>Utilize Tradamus visualizations, simulations, or charts to consider your project data in unique ways.</dd>
+    </dl>
+    <h4>Prepare for publication</h4>
+    <dl>
+        <dt><a ng-class="{active:compose.option === 'start publication'}" ng-click="composeChoice('start publication')">Start a new publication</a></dt>
+        <dd>Create a new visualization of this project for export or publication. Any project can support multiple publications.</dd>
+        <dt class="disabled">Refine a publication</dt>
+        <dd>Make changes to the layout or formatting of an existing publication. Copy an existing publication to create a different version.</dd>
+        <dt class="disabled">Export or Publish</dt>
+        <dd>Access your publications to publish as an interactive site or export as a static file.</dd>
+    </dl>
+</div>
+
+<div class="w60 hfull overflow-auto">
+    <div ng-switch="compose.option">
+
+        <div ng-switch-when="new witness" ng-controller="witnessFromFileController">
+            <p class="instructions">Witnesses are added through automatic links, files, or manual creation.</p>
+            <a onclick="alert('nothing happens yet')" class="debug">(Learn more about these options)</a>
+            <div ng-controller="WitnessCtrl">
+                <button class="tile actionable" ng-click='getWitnesses()'>Link a T-PEN Project</button>
+                <button ng-class="{disabled:!FileReaderSupported}" class="tile actionable" ng-click='showFileUpload()'>From File</button>
+                <button class="tile actionable" ng-click='createNewWitness()'>Manual Entry</button>
+            </div>
+        </div>
+
+        <div ng-switch-when="annotate witness" class="text-left">
+            <p class="instructions">Click on a witness to begin annotating the stored transcription.</p>
+            <a onclick="alert('nothing happens yet')" class="debug">(Learn more about annotation in Tradamus)</a>
+        </div>
+        <div ng-switch-when="read witness" class="text-left">
+            <p class="instructions">Select a witness to begin annotating the stored transcription.</p>
+        </div>
+        <div ng-switch-when="draft text" class="text-left">
+            <p class="instructions">Start making editorial decisions to organize the text that will appear in your draft.</p>
+            <p class="instructions">With this tool you will outline parts of your witnesses as sections for collation and organization.</p>
+            <a onclick="alert('nothing happens yet')" class="debug">(Learn more about how Projects are defined in Tradamus)</a>
+            <button class="tile actionable" ng-click="composeDraft()">{{edition.outlines.length>0 && "Update" || "Start"}} Draft</button>
+              </div>
+              <div ng-switch-when="start publication" ng-controller="createPublicationController">
+                  <p class="instructions text-left">This is where you create a visualization of <span class="text">{{edition.title|| 'your Project'}}</span> for export or publication.</p>
+                  <a onclick="alert('nothing happens yet')">(Take a Tour)</a>
+            <a onclick="alert('nothing happens yet')" class="debug">(Learn more about publication in Tradamus)</a>
+            <input type="text" ng-model="publication.title" placeholder="Entitle this Publication" class="w80" />
+            <button class="tile actionable"
+                    ng-class='{disabled:!publication.title}'
+                    ng-click='createPublication()'>Start Publication</button>
+            <a class="tile actionable" href='#/publication/simple/edition/{{edition.id}}'>Quick Export</a>
+              </div>
+        <div ng-switch-when="annotate draft" class="text-left" ng-controller="annotateDraftController">
+            <p class="instructions">Annotations attached to your draft will reference the
+                grouped materials as well. To only annotate one material at a time, use the <a>annotate a material</a> link.</p>
+            <a class="tile actionable" href="#/edition/{{edition.id}}/edit">Annotate</a>
+        </div>
+              <div ng-switch-when="add comment" class="text-left">
+                  <p class="instructions">Create or import text, images, or files that can serve as prologue, commentary, or appendices.</p>
+                  <button class="tile actionable disabled" ng-click='alert("not yet")'>Text</button>
+                  <button class="tile actionable disabled" ng-click='alert("not yet")'>Images</button>
+                  <button class="tile actionable disabled" ng-click='alert("not yet")'>Files</button>
+              </div>
+              <div ng-switch-when="thinking" class="text-left">
+                  <p class="instructions">Utilize Tradamus visualizations, simulations, or charts to consider your project
+                      data in unique ways without changing the underlying data.</p>
+                  There are none available at the moment, but you can let us know what you would like to see.
+              </div>
+              <div ng-switch-default class="text-left">
+                  <p class="instructions">This is where you create the draft of <span class="text">{{edition.title|| 'your Project'}}</span>. These steps are not all required and can be completed out of sequence, but are presented in the recommended order.</p>
+                  <p class="instructions">As you work in more detail, you will leave this page and explore each specific object that makes up this Project, but you can always close each panel to move up a level or return to the dashboard with the link at the bottom of the screen.</p>
+                  <!--            <a onclick="alert('nothing happens yet')">(Take a Tour)</a>
+                              <a onclick="alert('nothing happens yet')" class="debug">(Learn more about data in Tradamus)</a>-->
+              </div>
+    </div>
+    <!--    <div ng-show='edition.witnesses' style="height:{{2+edition.witnesses.length*1.25}}em;max-height: 22em;">-->
+    <div ng-show='edition.witnesses && compose.option.indexOf("witness") > -1'>
+        <h3>Attached Witnesses</h3>
+        <ul class="keyValue" ng-controller="WitnessCtrl">
+            <li ng-repeat='w in edition.witnesses' title='{{w.metadata.length|| "no" + " metadata"}}'>
+                <a ng-click="deleteWitness(w)" class="delete-tag"> &times; </a>
+                <!--<a href="#/edition/{{edition.id}}/witness/{{w.id}}">{{w.title || w.name || w.id || w}}</a>-->
+                <a ng-click="showWitnessIntraform(w, compose.option)">{{w.title|| w.name || w.label || w.id || w}}</a>
+            </li>
+        </ul>
+    </div>
+</div>

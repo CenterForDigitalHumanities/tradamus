@@ -1,0 +1,212 @@
+<div class="panel-default clearfix">
+    <div class="panel-heading text-center">
+        <h1 class="text-primary" ng-hide="isNaN(display.decision) || display.outline.decisions.length === 0">
+            <a style="text-decoration:none;" ng-class='{invisible:display.decision === 0}' ng-click='unmadeDecision(-1)'
+               tooltip-append-to-body="true" tooltip='Previous Undecided'>
+                <i class="fa fa-angle-left"></i>
+            </a>
+            <a style="text-decoration:none;" ng-class='{invisible:display.decision === 0}' ng-click='changeDecision(-1)'
+               tooltip-append-to-body="true" tooltip="Previous">
+                <i class="fa fa-caret-left"></i>
+            </a>
+            Decision {{display.decision + 1}} of {{display.outline.decisions.length}}
+            <a style="text-decoration:none;" ng-class='{invisible:display.decision === (display.outline.decisions.length - 1)}'
+               ng-click='changeDecision(1)'
+               tooltip-append-to-body="true" tooltip='Next'>
+                <i class="fa fa-caret-right"></i>
+            </a>
+            <a style="text-decoration:none;" ng-class='{invisible:display.decision === (display.outline.decisions.length - 1)}'
+               ng-click='unmadeDecision(1)'
+               tooltip-append-to-body="true" tooltip='Next Undecided'>
+                <i class="fa fa-angle-right"></i>
+            </a>
+        </h1>
+        <h1 ng-show="isNaN(display.decision) || display.outline.decisions.length === 0">Collation and Annotation</h1>
+    </div>
+    <div class="">
+        <div class="">
+            <div ng-if="!display.outline.decisions.length && (display.outline.bounds.length > 1)" class="panel-body">
+                <!--                No decisions exist, but there are multiple bounds-->
+                <div class='col-xs-12 col-md-8 col-md-offset-2'>
+                    <alert type="info">
+                        <i class="fa fa-info-circle"></i>
+                        No collation of these materials has been done yet. Begin collation to start the process:
+                    </alert>
+                    <button class="btn btn-primary btn-lg center-block"
+                            ng-click="collateSelectedOutline(display.outline)">
+                        <i class="fa" ng-class="{'fa-cogs':!spinning,'fa-cog fa-spin':spinning}"></i>
+                        Collate {{display.outline.bounds.length}} materials
+                    </button>
+                    <p class="help-block">
+                        Collation of very large sections or dozens of materials may take
+                        some time. Unfortunately, the complexity of the collation cannot
+                        be predicted well. You will see a progress bar, but it may not be
+                        reliable for collations which take longer than 20 seconds.
+                    </p>
+                    <loader for="collation" class="center-block"></loader>
+                    <p class="help-block">
+                        This message will disappear when collation is complete. To request
+                        a lengthy collation outside of real-time, use the collation button
+                        below. You will be notified via email when the collation has completed.
+                    </p>
+                    <alert ng-show="collationCode" type="info">
+                        Once you have received an email confirming the collation is finished, you
+                        may reload this page and retrieve it at <code>{{collationCode}}</code>.
+                        <p class="help-block">This address will also be in the email.</p>
+                    </alert>
+                    <div ng-hide="collationCode">
+                        <button class="btn btn-default center-block" ng-click="serverCollation(display.outline)">
+                        <i class="fa fa-terminal"></i>
+                        Request a server-side collation
+                    </button>
+                    <em class="help-block text-center">or</em>
+                    <div class="input-group col-xs-8 col-xs-offset-2 col-sm-6 col-sm-offset-3 col-lg-4 col-lg-offset-4"
+                         tooltip="Enter the location of the collation from the email or remote source.">
+                        <input class="form-control"
+                               ng-model="collationLocation" placeholder="Retrieve collation" type="text" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" ng-click="loadCollation(display.outline,collationLocation)">
+                                <i class="fa fa-upload"></i>
+                            </button>
+                        </span>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="display.outline.decisions.length && display.outline.bounds.length" collapse="display.hideCollation">
+                <div class="panel-body"><!--Tool Header-->
+                    <div class="col-sm-3 form-horizontal">
+                        <div class="form-group">
+                            <label for="readas" class="control-label col-lg-7"
+                                   ng-hide='display.outline.bounds.length === 1'>
+                                read as base text
+                            </label>
+                            <div class="col-lg-5">
+                                <select id="readas"
+                                        ng-model="display.baseText"
+                                        class="text form-control">
+                                    <option value="" selected="selected">&nbsp;&nbsp;Show Default</option>
+                                    <option ng-repeat='material in display["_cache_outline" + display.outline.id + "materials"]'
+                                            ng-hide='display["hideMaterial" + material.id]'
+                                            ng-value='{{material.id}}'>{{material.siglum||material.title}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label>Hide Materials</label>
+                            <div class="btn-group btn-group-sm">
+                                <label ng-repeat='m in display["_cache_outline" + display.outline.id + "materials"]'
+                                       class='btn-default btn' ng-model='display["hideMaterial" + m.id]' btn-checkbox
+                                       title="{{m.title}}">
+                                    {{m.siglum||m.title}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <!--TODO: Allow new material creation on the fly-->
+                        <button class="btn btn-xs btn-default pull-right ng-hide" ng-click="addManualVariant(display.outline.decisions[display.decision])">
+                            Manual Variant
+                        </button>
+                        <textarea ng-model="display.outline.decisions[display.decision].content"
+                                  class="fade in fast form-control text"
+                                  rows="6" placeholder="Edited Text"
+                                  animate-on-change="display.decision">
+                        </textarea>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <button class="btn btn-primary btn-block" ng-click="saveAll(outline.decisions, outline)" class="pull-right btn btn-primary">Save Decisions</button>
+                            <alert type="success" close="display.savedDecisionsMsg=undefined" collapse="!display.savedDecisionsMsg">
+                                {{display.savedDecisionsMsg}}
+                            </alert>
+                        </div>
+                        <div class="form-group">
+                            <button ng-click="selectSingleVariants()" class="btn btn-default btn-block">Choose all single variants</button>
+                            <alert collapse="!display.singleMsg" close="display.singleMsg=undefined" type="success">{{display.singleMsg}}</alert>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 bg-secondary panel-body tall">
+                    <div class="col-xs-3">
+                        <variant-list class="animate" is-context="true" decision="display.outline.decisions[(display.decision - 1)]"></variant-list>
+                    </div>
+                    <div class="col-xs-6">
+                        <variant-list class="animate" decision="display.outline.decisions[display.decision]"></variant-list>
+                        <div class="col-xs-12">
+                            <tags-widget item="display.outline.decisions[display.decision]" cache="display.outline.id" annos="display.outline.decisions"></tags-widget>
+                        </div>
+                    </div>
+                    <div class="col-xs-3">
+                        <variant-list class="animate" is-context="true" decision="display.outline.decisions[(display.decision + 1)]"></variant-list>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-controller="textAnnotationController"
+             class="col-xs-12 panel-body annotating"
+             ng-class="{'lift deep':display.outline.bounds.length > 1}">
+            <button class="btn btn-default position-absolute lift"
+                    style="right: 15px;top: -3rem;"
+                    ng-show="display.outline.bounds.length > 1"
+                    ng-click="display.hideCollation = !display.hideCollation">
+                <span ng-hide="display.hideCollation">
+                    Hide Collation <i class="fa fa-chevron-up animate"></i>
+                </span>
+                <span ng-show="display.hideCollation">
+                    Show Collation <i class="fa fa-chevron-down animate"></i>
+                </span>
+            </button>
+            <div class="reading animate" class="col-xs-12">
+                <h2 class='text text-center'>
+                    <a ng-click="updateSection(adjacentSection(-1))" ng-show='display.outline.index>1'>
+                        <i class="fa fa-caret-left"></i>
+                        {{adjacentSection(-1).title}}
+                    </a>
+                    <select ng-model="display.outline" ng-change="updateSection(outline)"
+                            ng-options="outline as outline.title for (id,outline) in outlines|orderBy:'index'">
+                    </select>
+                    <a ng-click="updateSection(adjacentSection(1))" ng-hide='display.outline.index + 1 > edition.outlines.length'>
+                        {{adjacentSection(1).title}}
+                        <i class="fa fa-caret-right"></i>
+                    </a>
+                </h2>
+                <page class="overflow-auto col-xs-8 reading" ng-controller="editionTranscriptionController">
+                    <!--Important! Do not allow any whitespace around these{{}} spans or offsets will be affected!-->
+                    <div  data-annotate-text>
+                        <span ng-if='display.outline.bounds.length === 1' bound-id='{{display.outline.bounds[0].id}}'
+                              class='edition line'>{{getBoundedText(display.outline.bounds[0])}}</span>
+                        <span ng-repeat="decision in display.outline.decisions"
+                              class="decision line edition"
+                              decision-id="{{decision.id > -1 && decision.id||'new'}}"
+                              decision-complete='{{decision.content.length > 0}}'
+                              ng-click="selectDecision($index)"
+                              ng-class="{'text-muted':!decision.content,'bg-info':$index === display.decision}">{{decision.content|| showUndecided(decision,display.basetext)}}</span>
+                    </div>
+                    <span ng-if="display.outline.bounds.length > 1 && display.outline.decisions.length === 0"
+                          bound-id='{{display.outline.bounds[0].id}}' class='edition line text-muted'>{{getBoundedText(display.outline.bounds[0])}}</span>
+                </page>
+            </div>
+            <annotation-summary class="animate col-sm-4" style="top:15px;right:0;" ng-show="display.annotation" selected="display.annotation"></annotation-summary>
+            <div id="annotationList" class="col-xs-4 animated fadeInRightBig" ng-controller="annotationController">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Current Annotations</h4>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-unstyled">
+                            <li ng-hide="(display.annoByTags || display['showTypes' + anno.type]) || (display.annoByTags && hasTag(anno,anno.tags))"
+                                class="list-group-item clearfix text-overflow"
+                                ng-repeat="anno in sortedAnnos(display.outline.annotations,annotations) track by $index"
+                                ng-click="select(anno)">
+                            <tags-list item="anno" class="pull-right"></tags-list>
+                            {{anno.attributes.label}} <span class="text-muted" ng-bind="makeLabel(anno)"></span>
+                        </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--    <div class="panel-footer clearfix">
+        </div>-->

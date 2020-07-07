@@ -1,0 +1,8 @@
+<ul class="">
+    <li ng-repeat="choice in decision.motesets"
+        ng-class="{'chosen':isChosen(choice.content)}"
+        ng-click="choose(choice.content)">
+        <span class="variantSigla text">{{choice.sigla.join(', ')}}</span>
+        <span class="variantContent text">{{choice.content}}</span>
+    </li>
+</ul>

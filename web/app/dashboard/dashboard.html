@@ -1,0 +1,111 @@
+<div id="dashboard" class="panel-default clearfix">
+    <div class="panel-body">
+        <section data-ng-show="user.id && !user.editions.length" class="clearfix" id="intro">
+            <alert type="info" class="lift col-40">
+                <div class="sectionBody">
+                    <p class="text"><span class="lead">Welcome to <em>Tradamus</em>,</span> a suite of tools for the creation
+                        and publication of scholarly editions. The power of digital data and the
+                        new possibilities in editorial assertion and annotation have been placed
+                        behind a helpful interface to allow for deep and accurate standards-based
+                        encoding of manuscripts, editorial assertions, collation, annotation and
+                        more without requiring the editor to learn another new language.</p>
+                    <p class="text">To begin, click the
+                        <a class="btn btn-default btn-xs" href="#/edition/new" title="Start a New Project">+ Create</a>
+                        link in your "Projects". If you get lost at any point, just look for the
+                        <i class="fa fa-question-circle cursor-pointer" title="Learn about Tradamus" ng-click="help()" topic="general" message="Learn about Tradamus"></i>
+                    <help></help> buttons.</p>
+                <p class="small">Read more: <a href="/" class="inline">Tradamus</a>,
+                        <a href="#" class="inline">Center for Digital Humanities</a>, or
+                        <a href="#" class="inline">Digital Standards for Scholarship</a>
+                    </p>
+                </div>
+            </alert>
+        </section>
+        <section data-ng-show="user.id" class="col-md-4">
+            <div class="panel panel-primary lift">
+                <header class="panel-heading">
+                    <tr-help class='pull-left' topic="CreateEdition" ng-show="showHelp"></tr-help>
+                    <a ng-show="user.editions.length"
+                       class="pull-right btn btn-default btn-xs"
+                       href="#/edition/new" title="Start a New Project">
+                        <i class="fa fa-plus"></i>
+                        Create
+                    </a>
+                    <h1 class="panel-title text-uppercase">
+                        editions
+                    </h1>
+                </header>
+                <div class="panel-body">
+                    <loader for='userEditions'></loader>
+                    <p data-ng-show="!user.editions.length" class="help-block">
+                        You have no projects started. Within Tradamus, a projects
+                        contains all the specific data and
+                        annotations surrounding a single subject.
+                        <a href="#/edition/new" class="center-block btn btn-primary btn-lg"
+                           title="Start a New Project">
+                            <i class="fa fa-plus"></i>
+                            Create
+                        </a>
+                </p>
+                <div ng-show="user.editions.length">
+                        <a ng-repeat="ed in user.editions"
+                           class="text-overflow btn-block"
+                           href="#/edition/{{ed.id}}">
+                            {{ ed.title || 'untitled' }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="panel lift panel-primary" ng-show="false && display.publicEditions.length">
+                <header class="panel-heading">
+                    <tr-help class='pull-left' topic="publicedition" ng-show="showHelp"></tr-help>
+                    <h1 class="panel-title text-uppercase">
+                        shared publications
+                    </h1>
+                </header>
+                <div class="panel-body">
+                    <a class="text-overflow btn-block"
+                       ng-repeat="p in display.publicEditions"
+                       target="_blank"
+                       href="publication.html#/publication/{{p.id}}">
+                        {{ p.title || 'untitled' }}
+                    </a>
+                </div>
+            </div>
+        </section>
+        <section class='col-md-8' data-ng-show="user.activity" ng-controller="activityController">
+            <div class="panel panel-primary lift">
+                <header class="panel-heading">
+                    <tr-help class='pull-left' topic="recentactivity" ng-show="showHelp"></tr-help>
+                    <h1 class="panel-title text-uppercase">
+                        recent activity
+                    </h1>
+                </header>
+                <loader for='userActivity'></loader>
+                <div class="panel-body">
+                    <ul class="list-unstyled">
+                        <li ng-repeat="log in display.activity">
+                            <div class="col-xs-7 col-md-8 text-overflow" title="{{log.action}}">{{log.action}}</div>
+                            <a class="btn btn-primary btn-xs col-xs-2 col-md-1"
+                               title="{{log.btnLabel}}"
+                               ng-show="log.href"
+                               ng-href="{{log.href}}"><i class="fa fa-arrow-circle-right"></i></a>
+                            <div class="col-xs-2 col-md-1" ng-hide="log.href"></div>
+                            <div class="col-xs-3 text-overflow" title="{{log.date}}">{{log.date}}</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="panel-footer ng-hide">
+                    <!--TODO: load all activity, filter by Project, combine some records-->
+                </div>
+        </section>
+</div>
+<div class="panel-footer text-center">
+        <div class="btn-group btn-group-sm">
+            <a class="btn btn-link" href="index.html">Home</a>
+            <button class="btn btn-link">About</button>
+            <button class="btn btn-link">Contact</button>
+            <button class="btn btn-link">Help</button>
+        </div>
+    </div>
+</div>

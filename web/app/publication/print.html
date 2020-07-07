@@ -1,0 +1,26 @@
+<div class="text">
+    <header class="text-center">
+        <div class="pull-right hidden-print btn-group">
+            <a class="hidden-print btn btn-primary" href="javascript:window.print()">
+                <i class="fa fa-print"></i>
+                Print</a>
+            <button class="hidden-print btn btn-primary" ng-click="pdf(document)">
+                <i class="fa fa-file-pdf-o"></i>
+                Build PDF
+            </button>
+            <p class="help-block" ng-show="pdfLocation">
+                Download your pdf at <a ng-href="{{pdfLocation}}">{{pdfLocation}}</a>.
+            </p>
+        </div>
+        <h1 ng-hide="longTitle">{{pub.title}}</h1>
+        <h2 ng-show="longTitle">{{pub.title}}</h2>
+    </header>
+    <div
+        ng-repeat="section in pub.allSections| orderBy: 'index' ">
+        <ng-switch on="::section.type">
+            <div ng-switch-when="TEXT" tr-text section="section"></div>
+            <div ng-switch-when="INDEX" tr-index section="section"></div>
+            <div ng-switch-default tr-note section="section"></div>
+        </ng-switch>
+    </div>
+</div>

@@ -1,0 +1,117 @@
+<div class="container-fluid tr-publication" id='simplePublication'>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" media="all">
+    <h1 class="col-md-12 fixed publicationTitle" ng-hide="longTitle">{{publication.title || edition.title}}</h1>
+    <h2 class="col-md-12 fixed publicationTitle" ng-show="longTitle">{{publication.title|| edition.title}}</h2>
+    <!--    <pre class="debug pre-scrollable" style="z-index: 5;opacity:1">{{selected.annotation|json}}</pre>-->
+    <div class="col-md-4 apparatus text ng-cloak fixed overflow-auto">
+        <!--        <annotation-details ng-hide="selected.annotation.type==='tr-decision'" class="col-md-12" readonly="true" annotation="selected.annotation"></annotation-details>-->
+        <div ng-hide="!selected.annotation||selected.annotation.type==='tr-decision'" class="col-md-12 annoDetails panel panel-default" ng-controller="annotationDetailsController">
+            <a class="closeBtn" ng-click="deselect()">&times;</a>
+            <div class="panel-body">
+                <div ng-class="{disabled:selected.annotation.content.length===0}" class="callup">
+                    {{getSelectedText()}}
+                </div>
+            {{selected.annotation.content || "No content"}}
+            {{selected.annotation.target}}
+            <dl class="dl-horizontal">
+                <dt ng-repeat-start="mote in selected.annotation.motesets || groupMotes(selected.annotation)">
+                {{mote.sigla.join(', ')||mote.witnesses.join(', ')}}
+                </dt>
+                <dd ng-repeat-end>
+                    {{mote.content}}
+                </dd>
+            </dl>
+            <tags-widget item="selected.annotation" readonly="true" class="pull-right"></tags-widget>
+            <div ng-show="selected.annotation.overlaps && selected.annotation.overlaps.length">
+                <strong class="panel-heading bg-primary">Overlapping Annotations</strong>
+                <div ng-repeat="a in selected.annotation.overlaps" anno-id="{{a.id}}" class="annotation list-group-item"
+                     ng-click="clickedAnno(a)">
+                    {{a.content || a.type}}
+                </div>
+            </div>
+                        </div>
+        </div>
+        <div ng-show="selected.annotation.type === 'tr-decision'" class="col-md-12 annoDetails panel panel-default" ng-controller="annotationDetailsController">
+            <a class="closeBtn" ng-click="deselect()">&times;</a>
+            <div class="panel-body">
+                <div ng-class="{disabled:selected.annotation.content.length === 0}" class="callup">
+                &ldquo;{{selected.annotation.content|| "No decision"}}&rdquo;
+            </div>
+            <dl class="dl-horizontal">
+                <dt ng-repeat-start="mote in selected.annotation.motesets || groupMotes(selected.annotation)">
+                {{mote.sigla.join(', ') || mote.witnesses.join(', ')}}
+                </dt>
+                <dd ng-repeat-end>
+                    {{mote.content}}
+                </dd>
+            </dl>
+                <tags-widget item="selected.annotation" readonly="true" class="pull-right"></tags-widget>
+                <div ng-show="selected.annotation.overlaps && selected.annotation.overlaps.length">
+                <strong class="panel-heading bg-primary">Overlapping Annotations</strong>
+                <div ng-repeat="a in selected.annotation.overlaps" anno-id="{{a.id}}" class="annotation list-group-item"
+                     ng-click="clickedAnno(a)">
+                    {{a.content || a.type}}
+                </div>
+            </div>
+            </div>
+        </div>
+        <accordion class="clearfix">
+            <accordion-group is-open='true'>
+                <accordion-heading>
+                    Annotations <span class="badge">{{annoCount}}</span>
+                </accordion-heading>
+                <div class="pre-scrollable">
+                    <div ng-repeat="a in viewableAnnotations()" anno-id="{{a.id}}" class="transition list-group-item"
+                         ng-class="{active:a.id===selected.annotation.id}"
+                         ng-click="clickedAnno(a)"
+                         scroll-to="d{{startDecision(a)}}"
+                         scroll-inside="simplePublication">
+                        <tags-widget item="a" readonly="true" class="pull-right"></tags-widget>
+                        <strong>{{a.label}}</strong>
+                        {{a.content || a.type}}
+                    </div>
+                </div>
+            </accordion-group>
+            <accordion-group>
+                <accordion-heading>
+                    Variants <span class="badge">{{sumUp(varCount)}}</span>
+                </accordion-heading>
+                <accordion>
+                    <accordion-group ng-repeat="outline in outlines" is-open='{{$first}}'>
+                        <accordion-heading>
+                            {{outline.title}} <span class="badge">{{varCount[$index].length}}</span>
+                        </accordion-heading>
+                        <div class="pre-scrollable">
+                            <div ng-repeat="d in varCount[$parent.$index] = (outline.decisions|variants)" anno-id="{{d.id}}" class="transition list-group-item"
+                                 ng-class="{active:d.id===selected.annotation.id,undecided:d.content===''}"
+                                 ng-click="clickedAnno(d)"
+                                 scroll-to="d{{d.id}}"
+                                 scroll-inside="simplePublication">
+                                <tags-widget item="d" readonly="true" class="pull-right"></tags-widget>
+                                {{d.content || ' ( undecided )'}}
+                            </div>
+                        </div>
+                    </accordion-group>
+                </accordion>
+            </accordion-group>
+        </accordion>
+    </div>
+    <div class="col-md-8 publicationText right">
+        <div ng-controller="editionTranscriptionController" class="editionTranscription">
+            <div class="pageLike page overflow-auto continuous ng-cloak" ng-class="" ng-repeat="outline in edition.outlines | orderBy:index">
+                <h3>{{outline.title}}</h3>
+                <decision ng-if='outline.bounds.length===1' bound-id='{{outline.bounds[0].id}}' class='edition line'>{{getBoundedText(outline.bounds[0], true)}}</decision>
+                <decision ng-repeat="decision in outline.decisions"
+                          class="decision line edition"
+                      id="d{{decision.id > -1 && decision.id||'new'}}"
+                      decision-complete='{{decision.content.length > 0}}'
+                      ng-class="{undecided:!decision.content,shadowLine:lightUp(decision.id)}"
+                      ng-click="clickedAnno(decision)"
+                      >{{decision.content|| showUndecided(decision)}}</decision>
+            </div>
+            <div class="w100 hhalf">
+                <!--spacer for scroll-->
+            </div>
+        </div>
+    </div>
+</div>

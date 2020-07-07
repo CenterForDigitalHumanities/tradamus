@@ -1,0 +1,42 @@
+<overlay>
+  <div ng-if="edition.collation" class="fullsize"> <a class="debug" ng-click="digestCollation()">digest</a>
+    <a ng-show='selected.decision.index > 0' ng-click='changeDecision(-1)'>Previous</a>
+    <h3>#{{selected.decision.index + 1}}</h3>
+    <!--        <a ng-show='selected.decision.index < edition.text.length' ng-click='changeDecision(selected.decision.index +1)'>Next</a>-->
+    <a ng-click='changeDecision(1)'>Next</a>
+    <div class="toolHeader">
+        <h3 class="toolHeader">Record {{selected.decision.index + 1}} of {{decisions.length}}</h3><!--
+        <div class="w20 decisionContext">
+        <p class="chosen" ng-show="selected.prevDecision.content">{{selected.prevDecision.content}}</p>
+        <p ng-repeat="choice in selected.prevDecision.motes">{{getText(choice)}}</p>
+      </div>
+      <div class="w40 decision">
+        <textarea>{{selected.decision.content}}</textarea>
+      </div>
+      <div class="w20 decisionContext">
+          <p class="chosen" ng-show="decisions[selected.decision.index - 1].content">{{decisions[selected.decision.index + 1].content}}</p>
+          <p ng-repeat="choice in selected.nextDecision.motes">{{getText(decisions[selected.decision.index + 1])}}</p>
+              </div>-->
+    </div>
+    <div class="toolBody">
+      <div ng-controller="variantListController">
+          motesets:{{selected.decision.motesets}}
+      </div>
+      <div class="w20 decisionContext">
+
+        <!--        <variant-list decision="{{(selected.decision.index - 1)}}">
+                </variant-list>-->
+        <variant-list decision="selected.decision">
+        </variant-list>
+<!--        <variant-list decision="{{(selected.decision.index + 1)}}">
+        </variant-list>-->
+      </div>
+
+    </div>
+  </div>
+  <p ng-hide="edition.collation">
+    You have no collation. You have nothing to confirm.
+    Try doing <a ng-click='collate()'>that</a> first.
+  </p>
+  <loader for="collation"></loader>
+</overlay>

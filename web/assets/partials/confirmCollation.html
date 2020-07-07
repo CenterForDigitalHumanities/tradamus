@@ -1,0 +1,111 @@
+<overlay>
+  <div ng-if="edition.collation" class="fullsize">
+      <div ng-show="decisions" class="review">
+          <h3>Collation Review</h3>
+      <div class="reviewCol">
+        <button class="moteSet" ng-class='{"invisible": display.record < 1}' ng-click='addNewMoteTag();display.record = display.record - 1'>Previous</button>
+        <span class="moteSet" ng-model='display.record' ng-change>Record: {{display.record + 1}} of {{decisions.length}}</span>
+        <button class="moteSet" ng-class='{"invisible": display.record > {{decisions.length}}- 1 }' ng-click='addNewMoteTag(); display.record = display.record + 1'>Next</button>
+        <div class="moteSet">
+            <a ng-click="mergeMoteset(decisions[display.record], -1)">Merge Previous</a>
+            <a ng-click="mergeMoteset(decisions[display.record], 1)">Merge Next</a>
+            <span class="context">{{getEditionContext(-1,display.record)}}</span>
+          <span>{{decisions[display.record].text || " No Decision "}}</span>
+          <span class="context">{{getEditionContext(1,display.record)}}</span>
+      <button class="debug" ng-click="saveDecisions()">Save</button>
+    </div>
+      <div class="details">
+        img, annotation stuff here
+        <button ng-click="refineAnnotation()">Refine this Annotation</button>
+<!--        <button ng-click="learnMore()">? Learn More ?</button>-->
+      </div>
+      </div>
+      <div class="reviewCol">
+
+        <div class="collationTable">
+          <style type="text/css">
+            div.collationTable {
+              overflow: auto;
+              max-height: 27em;
+            }
+            div.collationTable table {
+              border-collapse: collapse;
+            }
+            .collationTable td:not([style*="display: none"]):nth-child(2n-1), .collationTable tr:not([style*="display: none"]):nth-child(2n-1) {
+              background-color: rgba(0,0,0,.1);
+            }
+            .collationTable tr:hover {
+              background-color: rgba(0,0,0,.7) !important;
+              color: white;
+            }
+          </style>
+          View Collation Table for witness: <select ng-model="pick.witness">
+            <option value="false">Hide Table</option>
+            <option ng-repeat='w in edition.witnesses' value="{{w.id}}" title="{{w.title}}">{{w.siglum|| w.title}}</option>
+          </select>
+          <table ng-show="pick.witness">
+            <thead>
+            <th>{{getWitnessById(pick.witness).siglum}}<!--base-text--></th>
+            <th ng-repeat="w in edition.witnesses" ng-hide="{{w.id}} == pick.witness">
+              {{ w.siglum || w.title }}
+            </th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="d in decisions" >
+                    <td>{{pickText(d,pick.witness)}}</td>
+                <td ng-repeat="w in edition.witnesses" ng-hide="{{w.id}} == pick.witness" title="{{variantType(d,w.id)}}">
+                  {{variant(d,w.id)}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <a class="smallBtn" ng-click='showWitness("mote",$event)' ng-hide='display.witness === "mote"'>View mote</a>
+          <span ng-repeat="w in omittedWitnesses">
+            <a class="smallBtn" ng-click='showWitness(w,$event)' ng-hide='display.witness.id === w.id' title='Include {{w.title||w.siglum}}'>{{w.siglum || w.title}}</a></span>
+        </div>
+        <div class="decision" ng-show="display.witness === 'mote' ">
+            <textarea ng-model='decisions[display.record].text' placeholder="Select a witness or enter text here" /></textarea>
+        <ol>
+            <li ng-repeat="moteset in decisions[display.record].motesets" ng-click="setDecisionText(moteset.text)">
+                <!--          <span>{{getMoteContext(mote,-1,$index)}}</span>
+                  -->          {{moteset.text}}<!--
+                            <span>{{getMoteContext(mote,1,$index)}}</span>-->
+          <div>
+              <span ng-repeat="anchor in moteset.anchors" title="{{anchor.pos}}">
+                  {{getSiglum(anchor.witness)}}<span ng-if="$index<moteset.anchors.length-1">, </span>
+              </span>
+          </div>
+        </li>
+      </ol>
+      </div>
+        <div ng-repeat="o in omittedWitnesses" class="decision" ng-show='display.witness.id === o.id' ng-controller="nonDigitalWitnessController">
+          <h4 title='Viewing {{o.title||o.siglum}}'>{{o.title||o.siglum}}</h4>
+          <textarea ng-model='o.text' placeholder="Enter text here" /></textarea>
+                  <span ng-repeat="anchor in mote.anchors" title="{{anchor.pos}}">
+              {{getSiglum(anchor.witness)}}<span ng-if="$index<mote.anchors.length-1">, </span>
+            </span>
+        <span ng-repeat='(type,content) in o.context'>
+        <label>
+          <input ng-model='type' type='text' placeholder="Enter Context" />
+        </label>
+        <label>
+          <input ng-model='content' type='text' />
+        </label>
+        </span>
+        <button class='smallBtn' ng-click='newContext(o)'>+</button>
+      </div>
+        <h4>Manage Tags</h4>
+        <tags-widget ng-init="item = display.record"></tags-widget>
+        <button title="Click to add" class='smallBtn' ng-repeat="tag in fullListOfTags | unused:item.tags" ng-click="addTag(tag)">{{tag}}</button>
+      </div>
+    </div>
+  </div>
+  <p ng-hide="edition.collation">
+    You have no collation. You have nothing to confirm.
+    Try doing <a ng-click='collate()'>that</a> first.
+  </p>
+  <loader for="collation"></loader>
+</overlay>

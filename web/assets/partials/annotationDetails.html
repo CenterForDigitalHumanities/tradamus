@@ -1,0 +1,29 @@
+<div class="annoDetails slideRight" ng-if="selected.annotation">
+    <a class="closeBtn" ng-click="deselect()">&times;</a>
+    <h4>Annotation Details</h4>
+  <!--  <div ng-repeat="(k,v) in selected.annotation" ng-click="edit(k)">{{k}}:
+      <span ng-class="{text:k === 'content'}">{{annotationContent(k, v)}}</span>
+    </div>-->
+  <textarea ng-readonly="{{readonly}}" rows="3" type="text" ng-model="selected.annotation.content" placeholder="Annotation Content" class="text-left w100"></textarea>
+  <div class="text callup">&ldquo;{{getSelectedText()}}&rdquo;</div>
+  <div class="annotatedImg" ng-if="selected.annotation.canvas" style="{{clipHeight}}">
+      <img alt="selected annotation"
+           class="viewAnnotation"
+           ng-src="{{selected.annotation.canvas.images[0].uri}}"
+           style="{{imgContainerStyle}}"
+           />
+        <p ng-hide="selected.annotation.canvas" class="missing">
+            <button class="tile actionable smallBtn" ng-click="openIntraform('assets/partials/editImage.html')">Add page image</button>
+      </p>
+    </div>
+  <tags-widget item="selected.annotation" readonly="{{readonly}}"></tags-widget>
+  <anno-bounds annotation='selected.annotation'></anno-bounds>
+  <div ng-controller="editAnnotationController" ng-hide="readonly">
+      <!--      <button class="actionable tile" ng-click="openIntraform('assets/partials/editAnnotation.html')">Edit Details</button>-->
+      <button class="actionable tile" ng-click="saveAnnotation(selected.annotation)">Save Changes</button>
+      <button class="actionable tile" ng-click="deleteAnno()">Delete</button>
+    </div>
+
+    <!--  <div class="editAnnotation">
+    </div>-->
+</div>

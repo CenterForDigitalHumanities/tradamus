@@ -1,0 +1,18 @@
+<div ng-controller="WitnessCtrl">
+          <a class="closeBtn" ng-click="closeIntraform();">x</a>
+<h3>Add a Witness</h3>
+<header>
+    {{newWitness.title|| "untitled"}} {{!!newWitness.siglum && '('+newWitness.siglum + ')' || ''}}
+    <span class="debug" ng-if="newWitness.title === 'false'">Please don't name your project "false", it causes all sorts of problems. Add at least one character to either end to save.</span>
+</header>
+<p class="instructions">A manual Witness <em>must</em> have a title to reference, but every other field is optional.</p>
+<a onclick="alert('nothing happens yet')" class="debug">(Learn more about manual witnesses)</a><br />
+<label class="w100">Title:<input class="w100" type="text" name="title" placeholder="Pick a Title" ng-model="newWitness.title" /></label>
+<label ng-show="newWitness.title">Siglum:<input type="text" name="siglum" placeholder="(optional)" ng-model="newWitness.siglum" style="width:4em;" /></label>
+<div ng-show="newWitness.title">
+<h5>Additional Metadata</h5>
+<metadata-form attach="newWitness"></metadata-form>
+<button class="actionable tile" ng-click='addWitness();'>Save Witness</button>
+</div>
+<!--<button class="actionable tile" ng-click='closeIntraform()'>cancel</button>-->
+</div>

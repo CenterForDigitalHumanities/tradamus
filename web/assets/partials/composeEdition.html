@@ -1,0 +1,112 @@
+<div ng-controller="composeEditionController">
+    <h3>Compose Draft</h3>
+    <a class="closeBtn" ng-click="closeIntraform();">x</a>
+    <div ng-show="edition.outlines && !display.option" class="right w40 pageLike hfull compose">
+        <h4>Text Structure</h4>
+        <div class="sections" ng-class="{selected:editing.index === section.index}"
+             ng-repeat="section in outlinesAsArray() | orderBy:'index'"
+             ng-click="selectOutline(section)">
+            {{section.title || 'unlabeled'}}
+            <a class="moveUp" ng-click="moveUp(section)">▲</a>
+            <a class="moveDown" ng-click="moveDown(section)">▼</a>
+            <a class="delete-tag" ng-click="deleteSection(section)">&#x2326;</a>
+        </div>
+        <p ng-hide="edition.outlines">
+            Add a section to <span class="text">{{edition.title}}</span> by
+            making a selection to the left.
+        </p>
+    </div>
+    <div ng-show="display.option" class="right w40 pageLike hfull compose">
+        <div ng-switch="display.option">
+            <div ng-switch-when="witness" ng-controller="selectCollateController">
+                <div ng-repeat="c in content.collator" class="witnessPane">
+                    <a class="delete-tag" ng-click="removeCollator(c)">&times;</a>
+                    <cite>{{witnessTitle(c.startPage)}}</cite>
+                    <div>{{c.startText || bookendText(c)}} {{c.endText}}</div>
+                    <!--                    <div ng-show="typeEntry">
+                                            <label>Witness
+                        <select ng-options="w.title||w.id for w in edition.witnesses" ng-model="c.witness" class="witness"></select>
+                    </label>
+                    <label ng-class="{disabled:!c.witness}">Starting Page
+                        <select ng-options="p.title||p.id for p in c.witness.transcription.pages" ng-model="content.collator[$index].startPage" class="witnessPage"></select>
+                    </label>
+                    <label ng-class="{disabled:!content.collator[$index].startPage}">Starting Position
+                        <input type="number" min="0" max="{{content.collator[$index].startPage.text.length}}" ng-model="content.collator[$index].startOffset" class="witnessOffset" />
+                    </label>
+                    <label ng-class="{disabled:!c.witness}">Ending Page
+                        <select ng-options="p.title||p.id for p in c.witness.transcription.pages" ng-model="content.collator[$index].endPage" class="witnessPage"></select>
+                    </label>
+                    <label ng-class="{disabled:!content.collator[$index].endPage}">Ending Position
+                        <input type="number" min="0" max="{{content.collator[$index].endPage.text.length}}" ng-model="content.collator[$index].endOffset" class="witnessOffset" />
+                    </label>
+                    </div>
+                    <button ng-click="typeEntry = !typeEntry">{{typeEntry && "Hide " || "Show "}}Ugly Range Selection</button>
+                    <div ng-show="false">
+                        <label>
+                            Starts At: <span ng-class="{faded:!newCollator.startPage>0}">{{"temp text"}}</span>
+                        </label>
+                        <label>
+                            Ends At:
+                            <span ng-class="{faded:!newCollator.endPage>0}">{{"temp text"}}</span>
+                        </label>
+                                        </div>-->
+                </div>
+                <button ng-click="openCollatorForm(c)">Select New Range</button>
+                <!--                <button ng-show="display.collate" class="actionable smallBtn" ng-click="addCollator()">+</button>-->
+                <!--                <button ng-show="display.collate" class="actionable smallBtn" ng-click="collate()">Collate</button>-->
+            </div>
+            <div ng-switch-default >
+                <p class="instructions">
+                    Define a block of text to be inserted into your Draft as a self-contained
+                    annotation. You may later add annotations to this text range, if needed.
+                </p>
+                <textarea ng-model="content.text" class="hhalf w100"></textarea>
+            </div>
+            <button ng-click="saveNewSection(content)" class="smallBtn actionable">Add Section</button>
+            <button ng-click="defaultDisplay()" class="smallBtn actionable">Cancel</button>
+        </div>
+    </div>
+    <div class="hfull overflow-auto" ng-class="{'w60':edition.outlines}">
+        <div ng-if="editing.id" class="selectedSection overflow-auto">
+            <a class="closeBtn" ng-click="selectOutline()">x</a>
+            <h4>Selected Section</h4>
+            <label for="elabel" title="Tradamus will store this label for your own internal reference" class="left">Label:
+                <input type="text" ng-model="editing.title" id="elabel" />
+            </label>
+            <label for="eindex">
+                <input type="hidden" ng-model="editing.index" id="eindex" />
+            </label>
+            <label class="clear left w100">
+                Contains: <div ng-switch="editing.category">
+                    <span ng-switch-when="singleWitness">single attestation from {{targetToWitness(editing.bounds[0].target).siglum || targetToWitness(editing.bounds[0].target).title || "unknown"}}</span>
+                    <span ng-switch-when="collationGroup">multiple attestations from <span ng-repeat="frag in editing.bounds">{{targetToWitness(frag.target).siglum|| targetToWitness(frag.target).title || 'unknown'}}{{!$last && ", " || ""}}</span></span>
+                    <span ng-switch-when="directAnnotation">user entered text annotation</span>
+                    <span ng-switch-default>{{contentSummaryOutput}}</span>
+                </div>
+            </label>
+            <form action='{{editLink()}}'>
+                <button ng-show="editing.bounds.length === 1" type="submit">Edit Section</button>
+                <button ng-show="editing.decisions.length > 0" type="submit">Review Collation</button>
+                <button ng-show="editing.bounds.length > 1 && editing.decisions.length === 0"  type="submit">Collate This Group</button><loader for="collation"></loader>
+            </form>
+        </div>
+        <p class="instructions">
+            This outline describes the way in which your Materials will be
+            represented in your project. These sections are for your own organization
+            and may not be how you represent the structure in your final publication.
+        </p>
+        <label for="nshelp" class="right">
+            <help></help>
+            <input type="checkbox" ng-model="nshelp" id="nshelp" class="ng-hide" />
+        </label>
+        <h4>New Section</h4>
+        <button class="smallBtn actionable" ng-click="toSelect('witness')">by material</button>
+        <p class="instructions" ng-show="nshelp">
+            Select a range from one or more attached materials. Multiple attestations can be automatically collated in this way.
+        </p>
+        <button class="smallBtn actionable" ng-click="toSelect('annotation')">by annotation</button>
+        <p class="instructions" ng-show="nshelp">
+            Type or paste a block of text to insert into the project directly.
+        </p>
+    </div>
+</div>

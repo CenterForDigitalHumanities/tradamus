@@ -1,0 +1,29 @@
+<ul class="list-unstyled max-height-30">
+    <li ng-show="isContext && hasUniqueContent(decision.motesets) || noMotes(decision.motesets)"
+        ng-click="choose(null,$event)"
+        class="text active list-group-item">
+        <i class="fa fa-pencil"></i>
+        {{decision.content}}
+    </li>
+    <alert ng-show="noMotes(decision.motesets)" type="info">
+        You have hidden all the variants in this decision.
+    </alert>
+    <li ng-repeat="choice in decision.motesets"
+        ng-class="{'active':isChosen(choice.content),'text-muted small':isContext}"
+        ng-hide="isHidden(choice.witnesses)"
+        class="text list-group-item"
+        ng-click="choose(choice.content)">
+        <span>{{choice.sigla.join(', ')}}</span>
+        <span>{{choice.content}}</span>
+        <div ng-if="displayVariants" >
+            <img ng-repeat="m in choice.motes" selector="m.canvas || getCanvasSelector(m)"
+                 width="100%">
+        </div>
+    </li>
+    <button type="button" class="btn btn-default btn-xs pull-right"
+            ng-click="displayVariants = !displayVariants"
+            ng-hide="isContext">
+        <i class="fa fa-file-image-o"></i>
+        {{displayVariants && "Hide" || "View"}}
+    </button>
+</ul>

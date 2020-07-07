@@ -1,0 +1,124 @@
+<div>
+    <button class="pull-right btn btn-danger btn-sm" ng-click="modal.close()" tooltip='(esc)'><i class="fa fa-close"></i></button>
+    <div class="modal-header">
+        <h3 class="modal-title">Edit Materials
+            <tr-help topic="importmaterial" message="Learn more about materials"></tr-help>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div ng-class="{'col-xs-3 invisible':edition.witnesses.length===0&&!(data.browsingTpen||(newData.preview)||data.manually)}">
+            <div ng-class="{'col-xs-12':display.fullscreen,'col-sm-6':!display.fullscreen}" class="animate">
+                <ul class="list-unstyled pre-scrollable">
+                <li ng-repeat="material in edition.witnesses"  title="{{m.title}}" class="list-group-item text-overflow text" ng-init="m=materials['id'+material]">
+                    <div class="pull-right btn-group btn-group-xs">
+                        <a class="btn btn-default" ng-href="#/material/{{m.id}}" ng-click="modal.close()"><i class="fa fa-edit"></i> edit</a>
+                        <button class="btn btn-danger" ng-click="deleteMaterial(m.id)"><i class="fa fa-trash"></i></button>
+                    </div>
+                    <strong class="text-overflow" ng-class="{'col-xs-1':display.fullscreen,'col-xs-2':!display.fullscreen}">{{m.siglum|| m.title}}</strong>
+                    <span ng-show="m.siglum" class="text-muted">{{m.title}}</span>
+                </li>
+            </ul>
+            <button class="btn btn-default hidden-xs" ng-click="display.fullscreen = !display.fullscreen">
+                <i class="fa fa-expand" ng-class="{'fa-compress':fullscreen}"></i>
+            </button>
+        </div>
+        </div>
+        <div text-import="material">
+            <div class="col-sm-6 animate" ng-hide="display.fullscreen" ng-class="{'zero-width':display.fullscreen}">
+                <form name="importText" id="importText">
+                    <div class="btn-group-justified btn-group">
+                        <label class="btn btn-default" ng-model="inputType" btn-radio="'link'">
+                            <tr-help topic="link" ng-show="showHelp"></tr-help>
+                            <i class="fa fa-external-link"></i> Link</label>
+<label class="btn btn-default" ng-model="inputType" btn-radio="'file'">
+    <tr-help topic="file" ng-show="showHelp"></tr-help>
+    <i class="fa fa-file-code-o"></i> File</label>
+<label class="btn btn-default" ng-model="inputType" btn-radio="'text'">
+    <tr-help topic="text" ng-show="showHelp"></tr-help>
+    <i class="fa fa-file-text-o"></i> Text</label>
+                    </div>
+                    <div collapse="inputType!=='link'">
+                        <button type="button" class="form-control btn btn-primary" ng-click="data.browsingTpen = true">Browse T-PEN</button>
+                        <label>Link URI:</label>
+                        <div class="input-group input-group-lg">
+                            <input type="url" ng-model="link" class="form-control" placeholder="Import a remote URI" >
+                            <span class="input-group-btn">
+                                <button type="button" ng-click="resolveURI(link)" class="btn btn-primary">
+                                    <i class="fa fa-link"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                    <div collapse="inputType!=='file'">
+                        <label>Browse to File:</label>
+                        <div ng-show="FileReaderSupported" file-input="file"
+                             on-change="previewContent()"
+                             class="form-control input-lg"
+                             ></div>
+                    </div>
+                    <div collapse="inputType!=='text'">
+                        <p class="help-block">
+                            Paste or type text below to manually create a document from an
+                            XML or JSON formatted text or
+                            <button ng-click="data.manually=true" class="btn btn-primary btn-sm">
+                                Use this form
+                            </button>
+                            to create a completely new document.
+                        </p>
+                    </div>
+                    <textarea ng-model="newData.input"
+                              placeholder="Paste JSON, CSV, or XML here"
+                              rows="12"
+                              ng-hide="inputType !== 'text' && !newData.input"
+                              class="form-control"></textarea>
+                </form>
+                <tr-help ng-hide="importText.$pristine || (newData.isObj && newData.input.indexOf('<?xml') > -1)" topic="Preview2" ng-show="showHelp"></tr-help>
+                <button ng-hide="importText.$pristine || (newData.isObj && newData.input.indexOf('<?xml') > -1)" type="button" class="btn btn-primary" ng-click="updatePreview()">
+                    Preview Changes
+                </button>
+                <button ng-show="newData.isObj && newData.input.indexOf('<?xml') > -1" type="button" class="btn btn-primary" ng-click="importMaterial(newData.input, 'XML')">
+                    Import as XML
+                </button>
+            </div>
+            <div class="position-absolute animate" ng-class="{'col-xs-12':data.fullscreen,'col-sm-6':!data.fullscreen}" ng-show="newData.preview && importText.$pristine && (newData.input.indexOf('<?xml') === -1)">
+                <div class="panel panel-info drop-shadow">
+                    <button class="btn btn-default close" ng-click="importText.$setDirty();newData.preview=''">
+                        <i class="fa fa-close"></i>
+                    </button>
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Organize Data</h4>
+                    </div>
+                    <div class="panel-body pre-scrollable">
+                        <div ng-hide="newData.isObj">
+                            <p ng-bind-html="newData.textType" class="alert alert-warning"></p>
+                            {{newData.preview}}
+                        </div>
+                        <div ng-if="newData.isObj || (newData.isObj && newData.input.indexOf('<?xml') > -1)">
+                            <div object-tree parent="newData.preview" fullscreen="data.fullscreen">Object interface failed to load.</div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <alert ng-if="msg.message" type="{{msg.type}}" close="messages.addMaterial={}">
+                            {{msg.message}}
+                        </alert>
+                        <button class="btn btn-default" ng-show="newData.isObj" ng-click="data.fullscreen = !data.fullscreen">
+                            <i class="fa fa-expand" ng-class="{'fa-compress':data.fullscreen}"></i>
+                        </button>
+                        <button class="btn btn-primary" ng-click="commitEdits(newData.preview, data.fullscreen)">
+                            <i class="fa fa-edit"></i> Edit as JSON
+                        </button>
+                        <button type="button" class="btn btn-primary" ng-click="importMaterial(newData.preview, 'JSON')">
+                            Import this JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="data.browsingTpen" >
+                <div ng-include=" 'app/materials/importForm.html' " class="position-absolute animate" ng-class="{'col-xs-12':data.fullscreen,'col-sm-6':!data.fullscreen}"></div>
+            </div>
+            <div ng-if="data.manually">
+                <div ng-include=" 'app/materials/manualCreation.html' " class="position-absolute animate" ng-class="{'col-xs-12':data.fullscreen,'col-sm-6':!data.fullscreen}"></div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>

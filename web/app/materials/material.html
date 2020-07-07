@@ -1,0 +1,169 @@
+<div class="panel-default">
+    <div class="panel-heading text-center" ng-show="material.id">
+            <h1 class="text-primary text">
+            <div class="dropdown pull-right" dropdown on-toggle="toggled(open)">
+                <button class="btn btn-primary dropdown-menu-right dropdown-toggle"
+                        dropdown-toggle type="button"
+                        id="materialsList">
+                    <i class="fa fa-book"></i>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="m in materials"
+                        class="text-overflow" ng-show="m.id">
+                        <a href="#/material/{{m.id}}">
+                            <i class="fa fa-book"></i>
+                            <b>
+                                {{m.siglum}}
+                            </b>
+                            {{m.title}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            ({{material.siglum}}) {{material.title}}
+        </h1>
+    </div>
+    <div class="panel-body">
+        <div class="col-md-6">
+            <form class="form-group" name='title' id='title' ng-submit='updateTitles(material)'>
+                <label for="materialTitle">title</label>
+                <input id="materialTitle" type="text" ng-model="material.title" class="form-control input-lg">
+                <label for="materialTitle">siglum</label>
+                <input id="materialTitle" type="text" ng-model="material.siglum" class="form-control input-lg">
+                <button class="btn btn-primary pull-right" type="submit" collapse="!title.$dirty">
+                    <i class="fa fa-save"></i> Commit Title and Siglum
+                </button>
+            </form>
+
+            <div metadata-for="material">
+                <h2>description <span class="badge pull-right">{{item.metadata.length}}</span>
+                    <button ng-click="editMetadataForm(item)" class="btn btn-sm btn-default">
+                        <i class="fa fa-edit"></i> edit
+                    </button>
+                </h2>
+                <alert ng-hide="item.metadata.length" type="info">
+                    There is no metadata description.
+                </alert>
+                <dl class="dl-horizontal pre-scrollable" ng-if="item.metadata.length">
+                    <dt ng-repeat-start="m in item.metadata" data-mid="(m.id||m)">{{annotations['id' + (m.id || m)].type}}</dt>
+                    <dd ng-repeat-end class="text-overflow" title="{{annotations['id' + (m.id || m)].content}}">{{annotations['id' + (m.id || m)].content}}</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="clearfix">
+                <h3>
+                    <tr-help topic="Folio" ng-show="showHelp"></tr-help>
+                    <i class="fa fa-file"></i>
+                Folios
+                <span class="badge pull-right">{{material.manifest.canvasses.length||'0'}}</span>
+                </h3>
+            <p>
+                        <a class="label label-info pull-right" ng-click="help('canvases')" ng-controller="helpController">
+                            <i class="fa fa-question-circle"></i>
+                            Learn More
+                        </a>
+                        Every manuscript, image, or text resource is divided into
+                        pages&mdash;these imitate the
+                        <a href="http://iiif.io/api/presentation/2.0/#canvas" target="blank">
+                            SharedCanvas
+                            <i class="fa fa-external-link"></i>
+                        </a> standard, but
+                        with fewer requirements.
+                    </p>
+                    <thumbs-canvas slides="material"></thumbs-canvas>
+                    <div class="btn-group btn-group-sm col-xs-12" ng-hide="material.manifest.canvasses.length===0" ng-controller="manifestController">
+                        <a href="#/material/{{material.id}}/annotate" class="btn-primary btn">
+                            <i class="fa fa-comments-o"></i>
+                            Annotate
+                        </a>
+
+                        <!--                            This will be fun to do later!
+                                                    <button class="btn btn-primary" ng-click="organize(material.transcription.pages)" ng-controller="organizeController">
+                            <i class="fa fa-sort"></i>
+                            Organize Pages
+                                                    </button>-->
+
+                        <button class="btn btn-primary" ng-click="viewCanvas(material.manifest.canvasses,material)" >
+                            <i class="fa fa-eye"></i>
+                            Preview
+                        </button>
+                    </div>
+                    <button class="btn-primary btn form-control disabled" ng-show="material.manifest.canvasses.length===0">
+                        <i class="fa fa-pencil"></i>
+                        Add a Folio
+                    </button>
+            </div>
+            <div>
+                <h3>
+                    <tr-help topic="segments" ng-show="showHelp"></tr-help>
+                    <i class="fa fa-files-o"></i>
+                    Segments
+                </h3>
+                <p>
+                    <a class="label label-info pull-right" ng-click="help('outlines')" ng-controller="helpController">
+                        <i class="fa fa-question-circle"></i>
+                        Learn More
+                    </a>
+                    Segments of each document may annotate the structure to
+                    be used in collation or for reordering in publication.
+                </p>
+                <div class="btn-group btn-group-sm form-group col-xs-12" ng-controller="annotationController">
+                    <a class="btn btn-primary" href="#/material/{{material.id}}/structure" >
+                        <i class="fa fa-tag"></i>
+                        Segment {{material.title || "Material"}}
+                    </a>
+                    <button class="btn btn-primary"
+                            ng-if="material.annotations && material.annotations.length"
+                            ng-click="annotationView(material.annotations,'type')" >
+                        <i class="fa fa-bookmark"></i>
+                        View all Annotations
+                        <span class="badge">{{material.annotations.length||0}}</span>
+                    </button>
+
+                    <!--                    This will be fun to do later!
+                                        <button class="btn btn-primary" ng-click="" >
+                        <i class="fa fa-cogs"></i>
+                        Manage Annotations
+                                        </button>-->
+
+                </div>
+            </div>
+            <div class="clearfix">
+                <a ng-show="edition.outlines.length" href="#/draft/{{edition.id}}" class="btn-primary btn pull-right">
+                    <tr-help topic="section" ng-show="showHelp"></tr-help>
+                    <i class="fa fa-book"></i>
+                    Compose Draft
+                </a>
+                <alert type="{{edition.outlines.length&&'success'||'warning'}}">
+                    Tradamus will be the most valuable if the Edition is built from
+                    multiple, well-structured and annotated Segments of the Materials,
+                    organized in Outlines. Presentation relies on these Outlines being
+                    organized in Sections.
+                    <span ng-show="edition.outlines.length">
+                        Start composing this Draft now or continue annotating</span>
+                    <span ng-hide="edition.outlines.length">
+                        Begin structuring
+                    </span>
+                    <span class="text">{{material.title||material.label||"this document"}}</span>
+                    using the <a href="#/material/{{material.id}}/structure" class="btn btn-xs btn-default">Segment {{material.title || "Material"}}</a> button below.
+                </alert>
+            </div>
+        </div>
+    </div>
+        <div class="panel-footer clearfix">
+        <button class="btn-info btn pull-left" ng-click="showShareLinks(material)" ng-controller="exportController">
+            <i class="fa fa-share-alt"></i>
+            Export/Share
+        </button>
+        <button ng-click="deleteMaterial(material.id)" class="btn btn-sm btn-danger pull-right">
+            <i class="fa fa-trash"></i>
+            Discard
+        </button>
+        <div class="center-block text-center" ng-controller="editionController">
+            <span class="text text-primary">{{edition.title||edition.label||"Project"}}</span>
+            <small> by {{getOwner('name')}}</small>
+        </div>
+        </div>
+</div>

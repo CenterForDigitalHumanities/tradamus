@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.9.4
+Created-By: 1.8.0_60-b27 (Oracle Corporation)
+Bundle-Name: Tradamus
+Bundle-Version: 0.9.9
+Bundle-Date: 2017-05-08 13:24:17 CDT
+Bundle-Revision: ${svna.version}
+Implementation-Title: Tradamus
+Implementation-Version: 0.9.9
+Implementation-URL: http://tradamus.org
+

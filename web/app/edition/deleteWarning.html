@@ -1,0 +1,17 @@
+<div>
+    <div class="modal-header">
+        <h1><i class="fa fa-bomb"></i> Destroying {{edition.title}}</h1>
+    </div>
+    <div class="modal-body text-center">
+        <p class="lead text-danger">
+            Deleting this project is permanent and no user will be able to access it anymore.
+        </p>
+        <button class="btn btn-lg btn-primary" ng-click='modal.close()'>Cancel</button>
+    </div>
+    <div class="modal-footer">
+        <p ng-show="display[('del_edition_err'+edition.id)]" class="text-danger">
+            {{display[('del_edition_err'+edition.id)]}}
+        </p>
+        <button class="btn btn-danger" ng-click="informedDelete()">I understand, delete it</button>
+    </div>
+</div>

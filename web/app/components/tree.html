@@ -1,0 +1,13 @@
+<ul class="list-unstyled">
+    <li ng-repeat="(k,v) in parent" class="list-group-item text-overflow">
+        <div class="pull-right btn-group btn-group-xs">
+            <button class="btn btn-primary" ng-show="isObj(v)" ng-click="flattenNode(k)">flatten</button>
+            <button class="btn btn-danger" ng-hide="$first && $last" ng-click="removeNode(k)">delete</button>
+        </div>
+        <strong title="{{k}}">{{adjustLabel(k, fullscreen)}}</strong> : <span title="{{v}}">{{v}}</span>
+        <!--        <span ng-switch='isObj(v)'>
+                    <span ng-when='true'><object-tree node='v' parent='node'></object-tree></span>
+            <span ng-default>{{v}}</span>
+                </span>-->
+    </li>
+</ul>

@@ -1,0 +1,78 @@
+<div>
+    <button class="pull-right btn btn-danger btn-sm" ng-click="modal.close()"><i class="fa fa-close"></i></button>
+    <div class="modal-header">
+        <h3 class="modal-title">Select Segments for &ldquo;{{display.outline.label||display.outline.title}}&rdquo;</h3>
+    </div><!--
+        -->        <div class="modal-body" ng-controller="annotationController"><!--
+            -->                <div class="col-sm-6"><!--
+                -->            <p class="help-block">
+                    Select a document and then choose which structural annotation contains
+                    the segment to include. Add multiple segments to enable collation.
+                </p>
+            <h4>Assigned Segments</h4><!--
+            -->            <alert type="info" ng-hide="display.outline.bounds.length">
+                This segment has no content.
+                Select one of the materials below and choose a structural annotation from the list.
+</alert><!--
+-->            <table class="table table-striped">
+    <tbody>
+        <tr ng-repeat="b in display.outline.bounds" class="">
+            <td class="lead text-overflow">{{b.attributes.label}}</td>
+            <td class="text-overflow">
+                <!--                            TODO:getContent()-->
+            </td>
+            <td>
+                            <button class="ng-hide btn btn-xs btn-primary" title="Preview this text" ng-click="previewText('preview pending')">
+                                <i class="fa fa-eye"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-xs btn-danger" title="Remove from segment" ng-click="removeFrom(b,display.outline.bounds)">
+                                <i class="fa fa-close"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+</table><!--
+--><h4>Include Segment from Material <small ng-show="display.outline.bounds.length" class="badge pull-right"><i class="fa fa-check"></i> included</small></h4><!--
+-->            <ul class="list-unstyled pre-scrollable">
+    <li ng-repeat="m in materials"  title="{{m.title}}" class="list-group-item text-overflow text"
+        ng-click="display.material = m" ng-class="{active:display.material===m}">
+                    <strong class="text-overflow col-xs-2">{{m.siglum|| m.title}}</strong>
+                    <span ng-show="m.siglum">{{m.title}}</span>
+                                            <span class="badge" ng-show="containsBounds(m.id,display.outline.bounds)">
+                                                <i class="fa fa-check" title="This material is represented in this segment"></i>
+                                            </span>
+                    </li>
+</ul><!--
+--></div><!--
+-->        <div class="col-sm-6" ng-show="display.material"><!--
+            <div class="form-group">
+                <button class="btn btn-primary form-control" ng-model='showAll' btn-checkbox>Show {{showAll && 'Structure'||'All'}}</button>
+                <div collapse='!showAll' class="pre-scrollable">
+                    <button class="btn form-control" ng-class='{"btn-primary":t,"btn-default":!t}'
+                            ng-repeat="aType in display.annoTypes" ng-model='showTypes[aType]' btn-checkbox>
+                        <i class="fa pull-left" ng-class='{"fa-eye":showTypes[aType],"fa-eye-slash":!showTypes[aType]}'></i>
+                        {{aType}}
+                    </button>
+                </div>
+            </div>
+    -->            <ul class="list-unstyled">
+        <li ng-click='addBound(a,display.outline.bounds)' ng-class='{active:display.outline.bounds.indexOf(a)>-1}'
+            class="text-overflow list-group-item" ng-repeat="a in display.material.annotations | hasTag:'tr-structure'">
+            {{a.attributes.label||a.type+":"+a.content}}</li><!--
+        -->                <alert type="info" ng-hide="(display.material.annotations | hasTag:'tr-structure').length">
+            There are no structural annotations in this document.
+            <a class="btn btn-primary" href="#/material/{{display.material.id}}/structure" ng-click="modal.close()">
+                <i class="fa fa-tag"></i>
+                Segment {{display.material.title || "Material"}}
+            </a>
+</alert><!--
+-->            </ul><!--
+-->        </div><!--
+-->            <div class="clearfix"></div><!--
+-->    </div><!--
+-->    <div class="modal-footer">
+    <button class="pull-right btn btn-primary" ng-click="createOutline(display.outline.title,display.outline.bounds,display.outline.id);modal.close()">Save and Close</button>
+        </div>
+</div>

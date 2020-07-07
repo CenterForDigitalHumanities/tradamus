@@ -1,0 +1,105 @@
+<div class="panel-default">
+    <div class="panel-heading text-center">
+        <h1 class="text-primary" ng-controller="materialsController">
+            <span ng-hide="material.title">Annotating Material</span>
+            <span ng-show="material.title">Structure for
+                <span class="text">{{material.title}}</span>
+            </span>
+            <button class="btn btn-link" title="Learn more about structural annotations" ng-controller="helpController" ng-click="help('structure')"><i class="fa fa-question-circle"></i></button>
+            <div class="dropdown pull-right" dropdown on-toggle="toggled(open)" ng-click="checkForMaterials()">
+                <button class="btn btn-primary dropdown-menu-right dropdown-toggle"
+                        dropdown-toggle type="button"
+                        id="materialsList">
+                    <i class="fa fa-book"></i>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="m in materials"
+                        class="text-overflow" ng-show="m.id">
+                        <a href="#/material/{{m.id}}/structure">
+                            <i class="fa fa-book"></i>
+                            <b>
+                                {{m.siglum}}
+                            </b>
+                            {{m.title}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </h1>
+    </div>
+    <div class="panel-body">
+        <div ng-controller="manifestController"
+             ng-class="{annotating:display.annoList || selected.annotation}"
+             class="reading">
+            <div class="form-group form-horizontal clearfix">
+                <div class="col-xs-12 col-sm-6">
+                    <div class="input-group">
+                        <span class="input-group-btn" ng-if="display.page.index > 0">
+                            <button type="button" class='btn btn-primary' ng-click="display.page = material.transcription.pages[display.page.index - 1]" ng-class='{disabled:(display.page.index == 0)}' title="Previous">
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                        </span>
+                        <select ng-model="display.page"
+                                class='text form-control'
+                                ng-options="page as (page.title || '(untitled)') for page in material.transcription.pages">
+                        </select>
+                        <span class="input-group-btn" ng-if='display.page.index + 1 < material.transcription.pages.length'>
+                            <button type="button" class='btn btn-primary' ng-click="display.page = material.transcription.pages[display.page.index + 1]" ng-class='{disabled:display.page.index + 1 == material.transcription.pages.length}' title='Next'>
+                                <i class="fa fa-chevron-right"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <label class="control-label col-xs-4 col-sm-5 col-lg-3">Break on</label>
+                    <div class="col-xs-4 col-sm-7 col-lg-9">
+                        <select class="form-control" ng-model="display.linebreak">
+                            <option ng-repeat="a in display.annoTypes" ng-show="onPage(a, display.page.id)">{{a}}</option>
+                        </select>
+                    </div>
+                    <span class="btn btn-primary col-xs-4 visible-xs-inline" ng-model="display.annoList" btn-checkbox>Show structure</span>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-lg-offset-1 " ng-class="{'hidden-xs':!display.annoList}">
+                <div class="form-group">
+                    <button class="btn btn-primary btn-block" ng-model='showAll' btn-checkbox>Show {{showAll && 'Structure'||'All'}}</button>
+                    <div  collapse='!showAll'>
+                        <button class="btn form-control" ng-class='{"btn-primary":t,"btn-default":!t}'
+                                ng-repeat="aType in display.annoTypes" ng-model='display.show[aType]' btn-checkbox>
+                            <i class="fa pull-left" ng-class='{"fa-eye":display.show[aType],"fa-eye-slash":!display.show[aType]}'></i>
+                            {{aType}}
+                        </button>
+                    </div>
+                </div>
+                <ul class="list-unstyled">
+                    <li ng-click='clearLocks(anno); display.annotation = anno' class="text-overflow list-group-item"
+                        ng-repeat='a in material.annotations'
+                        ng-show='(anno.startPage === display.page.id || anno.endPage === display.page.id) && (showAll && display.show[anno.type] || (anno.tags && anno.tags.indexOf("tr-structure") > -1))'
+                        ng-init='anno = annotations["id" + a]'
+                        ng-class='{active:display.annotation.id === anno.id}'>{{anno.attributes.label||anno.type+":"+anno.content}}</li>
+                </ul>
+            </div>
+            <structural-annotation selected="display.annotation" class="col-sm-push-6 col-lg-push-5 col-sm-4 col-lg-3 animate" ng-init="instructions = 'Select a text range or click a line to begin marking sections for this material.'"></structural-annotation>
+            <div class="col-sm-pull-4 col-lg-pull-3 col-sm-6 col-lg-5">
+                <alert close="display.showDelete=false" type="warning"
+                       ng-hide="!display.annotation || (display.annotation.startPage === display.page.id && display.annotation.endPage === display.page.id)">
+                    This section include other pages not shown
+                    <i class="fa fa-files-o pull-left"></i>
+                </alert>
+                <page page-id="display.page.id" text-annotation ng-class="{'col-xs-8':display.annoList,'col-xs-12':!display.annoList}">
+                    <div ng-repeat="line in (display['text' + display.page.id + (display.linebreak||'line')] || getLineText(display.page,true)) track by line.id"
+                         ng-click="showLine(line.id,$event)"
+                         ng-class="{'bg-info':isContained(annotations['id' + line.id],display.annotation)}"
+                         class="line animate" annotation-id="{{line.id}}">{{line.text}}</div>
+                </page>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer clearfix">
+        <div class="center-block text-center" ng-controller="editionController">
+            <span class="text text-primary">{{edition.title||edition.label||"Project"}}</span>
+            <small>edited by {{getOwner('name')}}</small>
+        </div>
+    </div>
+</div>

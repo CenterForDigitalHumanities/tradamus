@@ -1,0 +1,56 @@
+<div>
+    <button class="pull-right btn btn-danger btn-sm" ng-click="modal.close()"><i class="fa fa-close"></i></button>
+    <div class="modal-header">
+        <h3 class="modal-title">Add Variant Manually</h3>
+        <alert type="warning">
+            This form is not yet functional
+        </alert>
+    </div>
+    <div class="modal-body">
+        <div class="col-sm-6">
+            <p class="help-block">
+                Manually include some variant from an unavailable,
+                non-digitized, or accidentally excluded text.
+            </p>
+            <div class="form-group" ng-show='availableMaterials.length'>
+                <label>Select Existing Material</label>
+                <div class="input-group">
+                    <select ng-model="newVariant"
+                            class="form-control"
+                            ng-options="m.title for m in availableMaterials">
+                    ></select>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default"
+                            ng-click="newVariant={}">
+                        Create New
+                    </button>
+                </span>
+                </div>
+            </div>
+            <div class="form-group" collapse="newVariant.id>0">
+                <label>Material</label>
+                <input ng-model="newVariant.title" type='text' class='form-control' placeholder='Include a Title'>
+                <label>Siglum</label>
+                <input ng-model="newVariant.siglum" type='text' class='form-control' placeholder='Short title or siglum'>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>Content</label>
+                <textarea class="form-control text"
+                          placeholder="Enter variant text"></textarea>
+            </div>
+            <alert type="info">
+                <span class="fa fa-info-circle fa-4x pull-left"></span>
+                Go back to the <a href="#/material">materials</a> page to add
+                metadata or other material details.
+            </alert>
+            <variant-list decision="display.outline.decisions[display.decision]"
+                          class="no-point form-group"></variant-list>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="modal-footer">
+        <button class="pull-right btn btn-primary" ng-click="saveManualVariant(newVariant)">Save and Close</button>
+    </div>
+</div>

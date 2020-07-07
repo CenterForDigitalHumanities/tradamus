@@ -1,0 +1,37 @@
+<div>
+    <version></version>
+    <div id="loggedIn" data-ng-show="user.id>0" userid="{{user.id}}">
+        <button type="button" ng-disabled="true">User Reports</button>
+  </div>
+    <div id="login" data-ng-hide="user.id>0" userid="{{user.id}}">
+        <h1>Tradamus</h1>
+    <ul class="subtitle">
+        <li>transcribe</li>
+        <li>collaborate</li>
+        <li>annotate</li>
+        <li>publish</li>
+    </ul>
+    <div id="loginForm" data-ng-init="Login={}">
+        <a ng-click="resetPassword();" style="float:right;" class="debug">Reset Password</a>
+        <a ng-click="resendEmail();" style="float:right;" class="debug">Resend Confirmation</a>
+        <form data-ng-show="is.LoginShown" autocomplete="off" name="loginForm">
+            <button type="submit" data-ng-click="login()" class="actionable right">Login</button>
+        <label for="loginEmail">Username <input name="mail" type="email" placeholder="email" data-ng-model="Login.mail" required /></label>
+        <label for="loginPwd">Password <input name="password" type="password" placeholder="password" data-ng-model="Login.password" required /></label>
+      </form>
+      <form data-ng-hide="is.LoginShown" autocomplete="off" name="signupForm">
+        <button type="submit" data-ng-click="signup()" class="actionable large right">Request Account</button>
+        <label>Full Name <input data-ng-model="newUser.name" type="text" placeholder="Full Name" required /></label>
+        <label>Email <input data-ng-model="newUser.mail" type="email" placeholder="email" required /></label>
+        <label>Password <input data-ng-model="newUser.password" type="password" placeholder="password" required /></label>
+        <label for="password2">Confirm <input ng-class="{invalid:!validate()}" name="password2" type="password" placeholder="confirm" data-ng-model="newUser.password2" required /></label>
+      </form>
+    </div>
+    <div id='tags'>
+      <a id="registerTag" href='#' data-ng-click="toggleForm()" class=""> {{switchFormString[is.LoginShown]}}
+        <!--        <span data-ng-show="is.LoginShown">New Account</span><span data-ng-hide="is.LoginShown">Login</span>-->
+      </a>
+    </div>
+  </div>
+</div>
+

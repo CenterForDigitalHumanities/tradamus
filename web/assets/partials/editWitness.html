@@ -1,0 +1,139 @@
+<overlay>
+  <tabs class="tabs-bottom">
+    <div>
+      <pane id="witnessTitle" heading="Witness">
+        <header>
+          <h3>{{witness.title}}(<span class="siglum">{{witness.siglum}}</span>)</h3>
+        </header>
+          <p class="instructions">This title will label this material throughout your project.</p>
+          <div class="block">
+        <label>Title: <input type="text" name="title" placeholder="Pick a Title" ng-model="witness.title" ng-change="showSaveTitle=true;" /></label>
+        <label>Siglum: <input type="text" class='text' name="siglum" placeholder="Pick a Siglum" ng-model="witness.siglum" ng-change="showSaveTitle=true;" /></label>
+        <button ng-show="showSaveTitle" ng-click="saveTitle()" class="datum debug" style="position: absolute;top:0;right:0;">save changes</button>
+      </div>
+      </pane>
+      <pane id="witnessMetadata" heading="Metadata">
+            <header>
+                <h3>Individual Material Metadata</h3>
+            </header>
+            <form ng-submit="addDatum()" name="metadataForm">
+          <input class="datum" required ng-minlength="3" type="text" ng-model="newDatum.type"  size="20" placeholder="add new name">
+          <span style="font-size: 2em;"> : </span>
+          <input class="datum" required ng-minlength="1" type="text" ng-model="newDatum.content" size="20" placeholder="add new value">
+          <input class="datum" type="submit" value="+" />
+        </form>
+            <a onclick="alert('not yet');">Show hidden metadata</a>
+        <table class="keyValue">
+          <tr ng-repeat="m in witness.metadata">
+            <td>{{m.type}} :</td><td>{{m.content}}</td><td><a class="actionable" ng-click="deleteDatum($index)" title="click to remove">-</a></td>
+          </tr>
+        </table>
+            <button class="debug" ng-click="witness.setMetadata()">Save Changes</button>
+      </pane>
+      <pane id="witnessText" heading="Transcription">
+        <header>
+            <h3>Transcription</h3>
+        </header>
+        <div ng-controller="witnessTranscriptionController">
+          <a ng-click="previousPage()" ng-show='selected.page.index'>Previous</a>
+          <select ng-model="selected.page"
+                  class='text'
+                  ng-change="updatePage()"
+                  ng-options="page as page.title || $index for page in witness.transcription.pages">
+          </select>
+          <a ng-click="nextPage()" ng-hide='selected.page.index+1==witness.transcription.pages.length'>Next</a>
+          <!--TODO replace ng-hide with orderBy and $last, $first-->
+          <label for="continuous"><input id="continuous" type="checkbox" ng-model="continuous">Remove linebreaks</label>
+          <div class="pageLike page" data-page-id="{{selected.page.id}}" annotate-text ng-class="{continuous:continuous}">
+
+            <!--            <pre style="position:fixed;background-color: lightblue;bottom:0;left:0;z-index:1000;">Selected:
+            text:       {{highlight.text}}
+startPage:  {{highlight.startPage}}
+endPage:    {{highlight.endPage}}
+startOffset:{{highlight.startOffset}}
+endOffset:  {{highlight.endOffset}}
+                        </pre>-->
+            <div class="line" data-line-id='{{line}}' ng-repeat="line in selected.page.lines">{{getLineText(line)}}</div>
+          </div>
+          <annotation-details></annotation-details>
+        </div>
+      </pane>
+      <pane id="witnessStructure" heading="Outline">
+        <header>
+          <h3>Annotate Witness Structure</h3>
+        </header>
+        <div ng-controller="WitnessStructuralController">
+          <h4>Witness Structure</h4>
+          <!--          <tree tree-nodes="witness.structure"></tree>-->
+          <div class="filterset w60 hfifth">
+            <h3>Structural Annotations</h3>
+            <div class="small w100">Click to hide</div>
+            <label ng-if="!hide[choice]" ng-repeat="choice in witness.annotations|dedup:'type'" for="{{'hide'+choice}}">
+              <input type="checkbox"
+                     id="{{'hide'+choice}}"
+                     ng-hide="true"
+                     ng-model="hide[choice]"
+                     />{{choice}}
+            </label>
+          </div>
+          <div class="filterset small w40 hfifth">
+            <div class="small w100">Click to restore</div>
+            <label ng-if="hide[choice]" ng-repeat="choice in witness.annotations|dedup:'type'" for="{{'hide'+choice}}">
+              <input type="checkbox"
+                     id="{{'hide'+choice}}"
+                     ng-hide="true"
+                     ng-model="hide[choice]"
+                     />{{ choice }}
+            </label>
+          </div>
+          <div id="annotationList" class="hhalf relative">
+            <ul class="h100">
+              <li ng-hide="hide['{{anno.type}}']" ng-repeat="anno in witness.annotations" ng-click="selectAnno(anno)">{{anno.label || anno.type+", "+anno.id}}</li>
+              </ul>
+          </div>
+        </div>
+        <annotation-details></annotation-details>
+      </pane>
+      <pane id="witnessCanvases" heading="Images">
+        <header>
+                <h3>Witness Images</h3>
+            </header>
+        <div ng-controller="witnessCanvasController">
+          <div class="imgContainer" style='float: left;'>
+            <a ng-click="previousPage()" ng-show='selected.canvas.index'>Previous</a>
+            Jump to:<select ng-model="selected.canvas"
+                            class='text'
+                            ng-change="updateCanvas()"
+                            ng-options="canvas as canvas.title || canvas.id for canvas in witness.manifest.canvasses">
+            </select>
+            <a ng-click="nextPage()" ng-hide='selected.canvas.index+1 == witness.manifest.canvasses.length'>Next</a>
+            <figure>
+              <div class="annotatedImg">
+                <img alt="{{selected.canvas.title || 'Canvas ' + canvas.id}}"
+                 ng-src="{{selected.canvas.images[0].uri}}" />
+
+                <div class="canvasAnnotations"
+                     ng-hide="hideAnnotations"
+                     ng-class="{selected:anno.id==selected.annotation.id}"
+                   ng-repeat="anno in getCanvasAnnotations(selection.canvas)"
+                 style="left:{{getLeft(anno)}}%;top:{{getTop(anno)}}%;width:{{getWidth(anno)}}%;height:{{getHeight(anno)}}%;"
+                 ng-click="selectAnno(anno)"
+                 data-content="{{anno.content}}">
+                  {{anno.title}}
+                </div>
+
+              </div>
+              <figcaption>{{selected.canvas.title}} ({{selected.canvas.index+1}} of {{witness.manifest.canvasses.length}})</figcaption>
+              <label><input type="checkbox" ng-model="hideAnnotations" />Hide Annotations</label>
+            </figure>
+          </div>
+          <annotation-details></annotation-details>
+          <div id="imgButtons">
+                <button>Reorder Images</button>
+                <button>Edit Annotations</button>
+            </div>
+        </div>
+      </pane>
+    </div>
+  </tabs>
+</overlay>

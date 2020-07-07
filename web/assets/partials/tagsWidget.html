@@ -1,0 +1,9 @@
+<span>
+    <span ng-repeat="tag in item.tags| splitTags| dedup" class="btn btn-xs btn-tag" ng-click="readonly || deleteTag(tag)">
+        {{tag}}
+        <i ng-hide="readonly" class="fa fa-close"></i>
+    </span>
+    <div ng-show='item.tags && !item.tags.length'>No tags found - type below and hit tab or enter to save tag</div>
+    <input class="form-control" ng-hide="readonly" ng-readonly="readonly" type="text" tag-input="" onblur="this.value=''" ng-model="tagText" new-tag="addTag()" delete-tag="deleteTag()" placeholder="Create new tag">
+</span>
+<button title="Click to add" class='btn btn-xs btn-default' ng-repeat="tag in fullListOfTags | unused:item.tags" ng-click="addTag(tag)">{{tag}}</button>

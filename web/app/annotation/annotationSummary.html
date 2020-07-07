@@ -1,0 +1,51 @@
+<div class="panel panel-info clearfix">
+    <div class="panel-heading clearfix">
+        <button class="btn btn-danger btn-xs pull-right" ng-show="closeable" ng-click='deselect(selected)'>
+            <i class="fa fa-close"></i>
+        </button>
+        <h4 class="panel-title">
+            <span ng-hide="editLabel">{{selected.attributes.label || "Annotation Details"}}</span>
+            <input ng-show="editLabel" ng-model="selected.attributes.label" placeholder="Enter a label">
+            <button class="btn btn-xs btn-default pull-right"
+                    title="{{selected.attributes.label && 'Edit'||'Add'}} Label"
+                    ng-click="editLabel=!editLabel">
+                <i class="fa fa-tag"></i>
+            </button>
+        </h4>
+    </div>
+    <div class="panel-body">
+        <div ng-if="selected">
+            <textarea ng-readonly="{{readonly}}" rows="3" type="text" ng-model="selected.content" placeholder="Annotation Content" class="text-left form-control"></textarea>
+            <div class="form-group clearfix">
+                <div class="reading max-height-15"><page class="col-xs-12 max-height-15">&ldquo;{{getSelectedText(selected)}}&rdquo;</page></div>
+                <div class="max-height-15">
+                    <img selector="selected.canvas" ng-show="selected.canvas" width="100%"
+                         src="data:image/gif;base64,R0lGODlhBAABAIAAAP///////yH5BAEAAAEALAAAAAAEAAEAAAIChFEAOw==">
+                </div>
+            </div>
+            <tags-widget item="selected" readonly="{{readonly}}"></tags-widget>
+        </div>
+        <div ng-hide="selected" class="help-block">
+            {{instructions||'Select some text from the page, click on a line, or choose an
+            annotation from the list to get started.'}}
+        </div>
+    </div>
+    <div class="panel-footer btn-group btn-group-sm col-xs-12" ng-hide="readonly || !display.annotation">
+        <alert ng-if="display.annoMessage" type="display.annoMessage.type" close="display.annoMessage=null">{{display.annoMessage.msg}}</alert>
+<button class="btn btn-primary" ng-click="saveAnnotation(display.annotation)" tooltip="{{display.annotation.id > 0 && 'Save Changes'|| 'Create Annotation'}}">
+            <i class="fa fa-save"></i>
+            <span class="hidden-sm hidden-md">
+                {{selected.id > 0 && "Save Changes"|| "Create Annotation"}}
+            </span>
+        </button>
+        <button class="btn btn-default" ng-click="deselect(selected)" ng-if="selected" tooltip="Clear Selection">
+            <i class="fa fa-close"></i>
+            <span class="hidden-sm hidden-md">
+                Clear Selection
+            </span>
+        </button>
+        <button class="btn btn-danger" ng-controller="annotationController" ng-click="deleteAnnotation(selected.id)" ng-if="selected.id > 0" tooltip="Delete Annotation">
+            <i class="fa fa-trash"></i>
+        </button>
+    </div>
+</div>

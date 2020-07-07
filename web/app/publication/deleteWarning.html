@@ -1,0 +1,17 @@
+<div>
+    <div class="modal-header">
+        <h1><i class="fa fa-bomb"></i> Destroying {{publication.title}}</h1>
+    </div>
+    <div class="modal-body text-center">
+        <p class="lead text-danger">
+            Deleting this publication is permanent and no user will be able to access it anymore.
+        </p>
+        <button class="btn btn-lg btn-primary" ng-click='modal.close()'>Cancel</button>
+    </div>
+    <div class="modal-footer">
+        <p ng-show="display[('del_publication_err'+publication.id)]" class="text-danger">
+            {{display[('del_publication_err'+publication.id)]}}
+        </p>
+        <button class="btn btn-danger" ng-click="informedDelete(publication.id)">I understand, delete it</button>
+    </div>
+</div>

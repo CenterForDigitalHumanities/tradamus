@@ -1,0 +1,29 @@
+<div class="panel-default">
+    <div class="panel-heading text-center">
+        <h1 class="text-primary">Publications</h1>
+    </div>
+    <div class="panel-body">
+        <alert type="info" ng-hide="display.publications.length" class="text-center">
+            <i class="fa fa-exclamation-circle"></i>
+            You have no publications started.
+            <button ng-click="showCreateForm()" class="btn btn-primary"
+                    ng-controller="createPublicationController">
+                <i class="fa fa-plus"></i> Start Publication
+            </button>
+        </alert>
+        <ul class="list-unstyled col-xs-12 col-md-8 col-md-offset-2 max-height-30" ng-show="display.publications.length">
+            <li ng-repeat="p in display.publications" title="{{p.title}}" class="text-overflow text">
+                <a href="#publication/{{p.id}}/edit" class="btn btn-default list-group-item clearfix">
+                    <span>
+                        {{ p.title || 'untitled' }}
+                        <i class="fa fa-chevron-right"></i>
+                    </span>
+                </a>
+            </li>
+            <button ng-click="showCreateForm()" class="btn btn-primary btn-block"
+                    ng-controller="createPublicationController">
+                <i class="fa fa-plus"></i> New Publication
+            </button>
+        </ul>
+    </div>
+</div>

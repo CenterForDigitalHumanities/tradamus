@@ -1,0 +1,56 @@
+<div>
+    <a class="btn btn-danger pull-right" ng-click="modal.close()">&times;</a>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            <span ng-hide="editLabel">{{comment.attributes.label|| "New Comment"}}</span>
+            <input ng-show="editLabel" ng-model="comment.attributes.label" placeholder="Enter a label">
+            <button class="btn btn-xs btn-default" type="button"
+                    title="{{comment.attributes.label && 'Edit'||'Add'}} Label"
+                    ng-click="editLabel = !editLabel">
+                <i class="fa fa-tag"></i>
+            </button>
+        </h4>
+    </div>
+    <div class="modal-body clearfix" ng-hide="user.id > 0">
+        <alert class="text-warning">
+            You must be logged in to save a comment.
+        </alert>
+    </div>
+    <div class="modal-body clearfix" ng-show="user.id > 0">
+        <label class="control-label">{{pickedType.label}} Content</label>
+        <textarea class="form-control" ng-model="comment.content" placeholder="Enter your {{pickedType.label}}"></textarea>
+        <label class="control-label">Annotation Type:</label>
+        <select class="form-control" ng-model='pickedType' ng-options='type.label for type in possibleTypes'></select>
+        <button type="button" class="btn btn-default btn-sm pull-right"
+                ng-click="showAdvanced=!showAdvanced">
+            <i class="fa fa-cogs"></i>
+            Customize
+        </button>
+        <small class="help-block"><i class="fa fa-info-circle"></i> {{pickedType.description}}</small>
+        <div class="form-horizontal" collapse="!showAdvanced">
+            <label class="control-label col-sm-2" title="http://www.w3.org/ns/oa#Motivation">Motivation</label>
+            <samp class="col-sm-6">
+                <input type="text" ng-model="pickedType.motivation" class="form-control" />
+            </samp>
+            <small class="help-block col-xs-12">
+                <i class="fa fa-link"></i>
+                URI: <a class="btn btn-link btn-xs"
+                        target="_blank" ng-href="http://www.tradamus.org/annotation/{{annotation.id}}">
+                    http://www.tradamus.org/annotation/{{annotation.id}}
+                </a>
+            </small>
+        </div>
+        <div class="visible-print-block">
+            <h3>Original Annotation</h3>
+        <pre>{{annotation}}</pre>
+        </div>
+    </div>
+    <div class="modal-footer clearfix" ng-show="user.id > 0">
+        <span class="pull-left">
+            <label class="control-label">Annotating as:</label>
+        <i class="fa fa-user"></i> {{user.name}}
+        <button class="btn btn-link" ng-click="logout()">Change User</button>
+        </span>
+        <button class="btn btn-primary" ng-click='saveComment(comment)'>Save {{pickedType.label}}</button>
+    </div>
+</div>

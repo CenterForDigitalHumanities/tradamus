@@ -1,0 +1,46 @@
+<h3>Selecting an Image</h3>
+<p>Changes here will be reflected on all annotations on this canvas.</p>
+
+<div ng-controller="editImageController">
+  <label      class="w100"
+              ng-show="selected.canvas.images.length > 1">Choose an image to edit:
+    <select
+      ng-model="choice"
+      ng-options="image as image.uri || image.index for image in selected.canvas.images"></select>
+  </label>
+  <div class="previewPane right w40">
+    <span class="overlayLabel" title="{{choice.uri || 'no image'}}">
+      <img alt="Canvas {{selected.canvas.id}}"
+           ng-src="{{choice.uri || ''}}"
+           class="w100"
+         /></span>
+  </div>
+  <div>
+    <label class="w60">Title: <input type="text" ng-model="selected.canvas.title" placeholder="optional title" /></label>
+    <label>Height:
+      <input ng-model="selected.canvas.height" />
+    </label>
+    <label>Width:
+      <input ng-model="selected.canvas.width" />
+    </label>
+    <div>
+      id:{{selected.canvas.id}}<br/>
+      index:{{selected.canvas.index}}<br/>
+      manifest:{{selected.canvas.manifest}}<br/>
+      page:{{selected.canvas.page}}
+    </div>
+    <div>
+      <h5>Image Specifics</h5>
+      <label>URI:
+        <input ng-model="choice.uri" ng-change="updateImageDimensions()" />
+      </label>
+      id:{{choice.id}}<br/>
+      index:{{choice.index}}<br/>
+      height:{{choice.height}}<br/>
+      width:{{choice.width}}<br/>
+    </div>
+    <button class="tile actionable" ng-click="addImage()">Add another image</button>
+    <button class="tile actionable" ng-click="removeImage()">Remove this image</button>
+    <button class="tile actionable" ng-click="closeIntraform()">Close</button>
+  </div>
+</div>

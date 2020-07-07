@@ -1,0 +1,33 @@
+<div class="panel panel-info drop-shadow" ng-controller="importRemoteMaterialController">
+    <div class="panel-heading">
+        <button type="button" class="btn btn-default close" ng-click="data.browsingTpen = null">
+            <i class="fa fa-close"></i>
+        </button>
+        <h4 class="panel-title">Importing Witnesses</h4>
+    </div>
+    <div class="panel-body">
+        <p class="alert alert-info" collapse="dismissed1">
+            <button class="btn btn-default close" type="button" ng-click="dismissed1 = true">
+                <i class="fa fa-close"></i>
+            </button>
+            Linked to {{import.link|| 'searching...'}}
+        </p>
+        <h4>Your Projects</h4>
+        <p class="alert"
+           ng-class="{'alert-default':msg().trace == 0,'alert-danger':msg().trace > 400,'alert-success':msg().trace == 200}"
+           collapse="dismissed2">
+            <button class="btn btn-default close" type="button" ng-click="dismissed2 = true">
+                <i class="fa fa-close"></i>
+            </button>
+            {{msg().message}}
+        </p>
+        <div class='pre-scrollable'>
+            <label class="list-group-item text-overflow" btn-checkbox btn-checkbox-true="p.id" ng-model='imports[$index]' ng-repeat='p in import.list'>
+                {{p.name|| p.title || p.label || p.id || $index+" no label"}}
+            </label>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button ng-click="importMaterials(imports,close)" class="btn btn-primary">Import ({{importsLength()}} selected)</button>
+    </div>
+</div>

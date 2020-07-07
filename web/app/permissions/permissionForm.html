@@ -1,0 +1,60 @@
+<div>
+    <button class="pull-right btn btn-danger btn-sm" ng-click="modal.close()" tooltip='(esc)'><i class="fa fa-close"></i></button>
+    <div class="modal-header">
+        <h3 class="modal-title">Edit Permissions for <span class="text">{{permissionList.context.title}}</span>
+            <tr-help topic="manageuser" message="Learn more about permissions"></tr-help>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div class="col-sm-6">
+            <h3><tr-help topic="Users" ng-show="showHelp"></tr-help>Add or Invite a User</h3>
+            <form ng-submit="addCollaborator(collaborator,permissionList.context)" name="memberForm" id="memberForm">
+                <div class="form-group" ng-class="{'has-error':memberForm.$invalid}">
+                    <label for="user">User</label>
+                    <input required name="user" id="user" class="form-control" type="email" placeholder="Enter an email" ng-model="collaborator.mail" ng-change="collaborator.user=null">
+                    <button class="btn btn-primary" ng-click="findDetails(collaborator)" type="button" collapse="collaborator.user">Check for User</button>
+                    <div collapse="!collaborator.user">
+                        <select required ng-model="collaborator.role" ng-options="r.value as r.description for r in roles" class="form-control" placeholder="Select a role"></select>
+                        <button class="btn btn-primary" type="submit">
+                            <span ng-show="exists(collaborator.user,permissions)">
+                                <i class="fa fa-upload"></i> Update
+                            </span>
+                            <span ng-hide="exists(collaborator.user,permissions)">
+                                <i class="fa fa-plus"></i> Add
+                            </span>
+                            {{collaborator.name||"user"}}</button>
+                    </div>
+                </div>
+            </form>
+            <ul class="list-unstyled pre-scrollable">
+                <li ng-repeat="p in permissions" class="list-group-item text-overflow" ng-class="{disabled:p.role==='OWNER'}" ng-hide="p.user===0">
+                    <div class="pull-right btn-group btn-group-xs" ng-hide="p.role==='OWNER'">
+                        <button class="btn btn-default" ng-click="editPermission(p)"><i class="fa fa-edit"></i></button>
+                        <button class="btn btn-danger" ng-click="removePermission(p.id)"><i class="fa fa-trash"></i></button>
+                    </div>
+                    <strong title="{{p.mail}}">{{p.name}}</strong> : <span title="{{p.role}}">{{p.role}}</span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-6">
+            <h3><tr-help topic="publicshare" ng-show="showHelp"></tr-help>Public Sharing</h3>
+            <form ng-submit="addCollaborator(publicUser, permissionList.context,true)" name="publicForm" id="publicForm">
+                <div class="form-group" ng-class="{'has-error':memberForm.$invalid}">
+                    <label for="pubs">Set Public Access</label>
+                    <select id='pubs' ng-model="publicUser.role"
+                            ng-options="r.value as r.description for r in roles" class="form-control"></select>
+                    <button class="btn btn-primary" type="submit" collapse="publicForm.$pristine">
+                        <i class="fa"
+                           ng-class="{'fa-globe':publicUser.role==='EDITOR','fa-eye':publicUser.role==='VIEWER','fa-ban':publicUser.role==='NONE'}"></i>
+                        Update Sharing</button>
+                    <p>Public access is {{parsePublicRole()}}.</p>
+                    <p ng-show='publicUser.role === "EDITOR"'>Any registered user may alter this project.</p>
+                    <p ng-show='publicUser.role === "CONTRIBUTOR"'>This edition is listed on the "Public Projects" list for annotation.</p>
+                    <p ng-show='publicUser.role === "VIEWER"'>This edition is listed on the "Public Projects" list as read-only.</p>
+                    <p ng-show='publicUser.role === "NONE"'>No one other than collaborators can see this project.</p>
+                </div>
+            </form>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>

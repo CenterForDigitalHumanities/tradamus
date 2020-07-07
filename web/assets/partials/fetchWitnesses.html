@@ -1,0 +1,19 @@
+<div ng-controller='importRemoteWitnessController'>
+    <h3>Importing Witnesses</h3>
+      <a class="closeBtn" ng-click="closeIntraform(imported.witnesses);">x</a>
+<header>
+    Linked to {{import.link || 'searching...'}}
+</header>
+      <p class="instructions">{{msg()}}</p>
+      <h4>Your Projects</h4>
+
+      <form ng-submit="importWits()" name="importWitnesses">
+          <div class='hhalf overflow-auto'>
+              <label ng-repeat='w in import.list' for='p{{getId(w.id)}}'>
+                  <input type="checkbox" id='p{{getId(w.id)}}' ng-true-value="{{getId(w.id)}}" ng-model='imports[$index]' />{{w.title || w.name}}
+              </label>
+    </div>
+          <input type="submit" value='Import ({{importsLength()}} selected)' />
+          <!--  <button ng-click='closeIntraform()'>cancel</button>-->
+</form>
+</div>

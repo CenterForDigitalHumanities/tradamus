@@ -1,0 +1,13 @@
+<div ng-controller="viewPublicationController" class="clearfix">
+    <h3>{{section.title}}</h3>
+    <input type="text" ng-model="display['prefixes'][section.index]"
+           class="input-sm pull-right hidden-print" placeholder="prefix"
+           size="1" maxlength="1"
+           ng-change="updateNotes(printAnnotations(section), display['prefix' + section.id])" />
+    <div ng-repeat="a in printAnnotations(section)"
+         ng-init="display['note' + a.id][section.index] = ($index + 1)"
+         annotation-id="{{a.id}}"
+            style="{{getRules(a, section.layout)}}">
+        {{display['prefixes'][section.index] + ($index + 1)}}.
+        {{a.content}}</div>
+</div>

@@ -1,0 +1,99 @@
+<div>
+    <button class="pull-right btn btn-danger btn-sm" ng-click="modal.close()"><i class="fa fa-close"></i></button>
+    <div class="modal-header">
+        <h3 class="modal-title">{{canvases[display.activeCanvas].title || "View Canvas"}}
+            <button class="btn btn-link" title="Learn more about canvases" ng-controller="helpController" ng-click="help('canvas')"><i class="fa fa-question-circle"></i></button>
+            <small class="hidden-sm pull-right">
+                <button class="btn btn-default" ng-style="{visibility:display.activeCanvas===0&&'hidden'}" ng-click="show(display.activeCanvas-1)">
+                    <i class="fa fa-chevron-left"></i>
+                </button>
+                <span> {{display.activeCanvas+1}} of {{::canvases.length}} </span>
+                <button class="btn btn-default" ng-style="{visibility:display.activeCanvas===canvases.length-1&&'hidden'}" ng-click="show(display.activeCanvas+1)">
+                    <i class="fa fa-chevron-right"></i>
+                </button>
+            </small>
+        </h3>
+    </div>
+    <div class="modal-body hold-height reading clearfix">
+        <div class="col-sm-3">
+            <button class="btn btn-default" ng-click="display.editCanvas=!display.editCanvas">{{display.editCanvas&&"Hide Details"||"Edit Canvas"}}</button>
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-default" ng-click="display.showImages = false"
+                        ng-class="{active:!display.showImages}">
+                    <i class="fa fa-file-text-o"></i>
+                </button>
+                <button class="btn btn-default" ng-click="display.showImages = true"
+                        ng-class="{active:display.showImages}">
+                    <i class="fa fa-file-image-o"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-9 form-horizontal">
+            <div class="form-group" ng-hide="display.showImages">
+                <label class="control-label col-xs-4">Break on</label>
+                <div class="col-xs-8">
+                    <select class="form-control" ng-model="display.linebreak">
+                        <option ng-repeat="a in display.annoTypes" ng-show="onPage(a,canvases[display.activeCanvas].page)">{{a}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" ng-show="display.showImages">
+                <label class="control-label col-xs-4">Zoom ({{display.zoom*100+"%"}})</label>
+                <div class="col-xs-8">
+                    <input class="btn btn-default" ng-model="display.zoom" type="range" min=".25" max="2" step=".25">
+                </div>
+            </div>
+        </div>
+        <label ng-show="display.showImages" btn-checkbox ng-model="display.showCanvasAnnotations" class="pull-right btn btn-default">
+            {{display.showCanvasAnnotations && "Hide" || "Show"}} Annotations
+            <span class='badge'>{{Object.keys(display['cache_canvasBoxes' + canvas.id])}}</span>
+        </label>
+        <form class="col-xs-12" collapse="!display.editCanvas" name="canvasDetails" id="canvasDetails" ng-submit="updateCanvas(canvasDetails)">
+            <div class="form-group col-sm-12">
+                <label>Image Location</label>
+                <input class="form-control"
+                       placeholder="absolute path to image"
+                       ng-model-options="{ updateOn: 'blur' }"
+                       ng-model='canvases[display.activeCanvas].images[0].uri' type="url">
+                <label>Label</label>
+            <input class="form-control"
+                   ng-model='canvases[display.activeCanvas].title'
+                   placeholder="simple label for this page"
+                   type="text">
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6">
+                <label>Height</label>
+                <input class="form-control" ng-model='canvases[display.activeCanvas].height' type="number">
+                <span class="help-block">
+                    Natural height is {{canvases[display.activeCanvas].images[0].height}}.
+                </span>
+                </div>
+            <div class="col-sm-6">
+                <label>Width</label>
+                <input class="form-control" ng-model='canvases[display.activeCanvas].width' type="number">
+                <span class="help-block">
+                    Natural width is {{canvases[display.activeCanvas].images[0].width}}.
+                </span>
+            </div>
+            </div>
+            <button class="btn btn-primary" collapse="canvasDetails.$pristine" type="submit">Save Changes</button>
+        </form>
+        <button class="position-absolute animate hidden-xs btn btn-default"
+                ng-style="{visibility:display.activeCanvas === 0 && 'hidden',left:'6%',top:((display.editCanvas&&'60')||'30')+'%'}"
+                ng-click="show(display.activeCanvas - 1)">
+            <i class="fa fa-chevron-left fa-4x"></i>
+        </button>
+        <button class="position-absolute animate hidden-xs btn btn-default"
+                ng-style="{visibility:display.activeCanvas === canvases.length - 1 && 'hidden',right:'6%',top:((display.editCanvas&&'60')||'30')+'%'}"
+                ng-click="show(display.activeCanvas + 1)">
+            <i class="fa fa-chevron-right fa-4x"></i>
+        </button>
+        <shared-canvas ng-show="display.showImages" canvas="canvases[display.activeCanvas]"
+                       show-annotations="display.showCanvasAnnotations"
+                       ng-class="{'half-height':display.editCanvas}" class="col-xs-12 overflow-auto"> </shared-canvas>
+        <page ng-hide="display.showImages" ng-class="{'half-height':display.editCanvas}" class="col-xs-12 col-sm-8 col-sm-offset-2 overflow-auto max-vh-70">
+            <div class="line" annotation-id="{{line.id}}" ng-repeat="line in (display['text' + display.page.id + (display.linebreak||'line')] || getLineText(display.page,true)) track by line.id">{{line.text}}</div>
+        </page>
+    </div>
+</div>

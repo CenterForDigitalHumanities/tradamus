@@ -1,0 +1,58 @@
+<h3>Editing Annotation</h3>
+<a class="closeBtn" ng-click="closeIntraform();">x</a>
+<p class="instructions">All areas of this page are editable.</p>
+
+<div ng-controller="editAnnotationController" class="annotation">
+    <label>Label: <input type="text" ng-model="selected.annotation.attributes.label" placeholder="optional label" /></label>
+    <label>Content: <textarea type="text" ng-model="selected.annotation.content" placeholder="Annotation Content"></textarea></label>
+    <div class="text callup">"{{getSelectedText()}}"</div>
+    <p class="instructions" ng-show="!selected.annotation.canvas">No image is identified for this annotation.</p>
+  <!--  <svg xmlns="http://www.w3.org/2000/svg"
+         ng-attr-viewBox="-{{selected.annotation.x}} -{{selected.annotation.y}} {{selected.canvas.width}} {{selected.canvas.height}}"
+       ng-attr-height="{{selected.annotation.height}}"
+       ng-attr-width="{{selected.annotation.width}}">
+    <image xlink:href="assets/img/symbol.gif"
+           ng-xlink="{{selected.canvas.images[0].uri}}"
+           x="0"
+           y="0"
+           ng-attr-height="{{selected.canvas.height}}"
+           ng-attr-width="{{selected.canvas.width}}" />
+    </svg>-->
+  <div class="annotatedImg" ng-if="selected.annotation.canvas" style="{{clipHeight}}">
+      <img alt="selected annotation"
+         class="viewAnnotation"
+         ng-src="{{selected.annotation.canvas.images[0].uri}}"
+         style="{{imgContainerStyle}}"
+         />
+  </div>
+  <a class="right smallBtn" ng-click="hideTextRange = !hideTextRange">Adjust Text Range {{hideTextRange && "◄"||"▼"}}</a>
+  <div class="selectionControls block" ng-hide="hideTextRange">
+      <h5>Preview text:</h5>
+    <p class="text"><span class="faded">{{getContextText(-1)}}</span>{{getSelectedText() || "⌂"}}<span class="faded">{{getContextText(1)}}</span></p>
+    <label class="ng-hide">Start Page: <input type="number" min="0" ng-model="selected.annotation.startPage" ng-change="sensible('page')" /></label>
+    <label>Start Offset: <input type="number" min="0" ng-model="selected.annotation.startOffset" ng-change="sensible('offset')" /></label>
+    <label class="ng-hide">End Page: <input type="number" min="0" ng-model="selected.annotation.endPage" ng-change="sensible('page')" /></label>
+    <label>End Offset: <input type="number" min="0" ng-model="selected.annotation.endOffset" ng-change="sensible('offset')" /></label>
+  </div>
+  <a class="right smallBtn" ng-click="hideImg=!hideImg">Adjust Image {{hideImg && "◄"||"▼"}}</a>
+  <div ng-hide="hideImg" class="block">
+      <div ng-hide="!selected.annotation.canvas || selected.annotation.selector">
+          <label>Left: <input type="number" min="0" max="{{selected.canvas.images[0].width-1}}" ng-change="clippedLine(selected.annotation)" ng-model="selected.annotation.x" /></label>
+      <label>Top: <input type="number" min="0" max="{{selected.canvas.images[0].height-1}}" ng-change="clippedLine(selected.annotation)" ng-model="selected.annotation.y" /></label>
+      <label>Width: <input type="number" min="1" max="{{selected.canvas.images[0].width-selected.annotation.x}}" ng-change="clippedLine(selected.annotation)" ng-model="selected.annotation.width" /></label>
+      <label>Height: <input type="number" min="1" max="{{selected.canvas.images[0].height-selected.annotation.y}}" ng-change="clippedLine(selected.annotation)" ng-model="selected.annotation.height" /></label>
+    </div>
+      <div ng-hide="!selected.annotation.canvas || selected.annotation..x>-1">
+          some selector data would be here and processed.
+    </div>
+    <button class="smallBtn actionable" ng-click="attachCanvas(selected.annotation)" ng-hide="selected.annotation.canvas">Add page image</button>
+    <p ng-hide="!selected.annotation.canvas || selected.annotation.selector || selected.annotation.x>-1">
+        No selector data is found. We should let you add some.
+    </p>
+  </div>
+  <h5>Manage Tags</h5>
+  <tags-widget item="selected.annotation"></tags-widget>
+
+  <button class="actionable tile" ng-click="saveAnnotation($scope.selected.annotation,true)">Save Changes</button>
+</div>
+<!--<button class="actionable tile" ng-click='closeIntraform()'>cancel</button>-->

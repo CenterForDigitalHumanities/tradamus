@@ -1,0 +1,84 @@
+<div>
+    <a class="closeBtn" ng-click="modal.close()">&times;</a>
+    <div class='modal-header'>
+        <h2 class='modal-title'>{{selector.value}} <small>{{selector.type}}</small></h2>
+        <button class="btn btn-default btn-xs pull-right" ng-click="selector = {value: selector.value, type: selector.type}">Reset</button>
+    </div>
+    <div ng-show="!publication.sections.length" class="bg-danger text-danger modal-body">
+        <p>Until sections have been added to this publication, no rules can be created.</p>
+        <button ng-click="modal.close()" class="btn-danger">Okay</button>
+    </div>
+    <div ng-show="publication.sections.length" class="modal-body">
+        <div class="form-group">
+            <!--TODO: Iconize these options and add a title to the buttons-->
+            <h4>Layout</h4>
+            <label btn-radio="'suppress'" class="btn btn-default form-control" ng-model="selector.layout">Suppress these annotations in this publication</label>
+            <div class="btn-group btn-group-justified btn-group-sm">
+                <label btn-radio="" class="btn btn-default" ng-model="selector.layout">Default</label>
+                <label btn-radio="'p'" class="btn btn-default" ng-model="selector.layout">Paragraph</label>
+                <label btn-radio="'l'" class="btn btn-default" ng-model="selector.layout">Line</label>
+                <label btn-radio="'x'" class="btn btn-default" ng-model="selector.layout">Remove</label>
+            </div>
+            <div class="bg-info text-info" collapse="!selector.layout">
+                <small ng-switch="selector.layout">
+                    <span ng-switch-when="p">Present the bounded text as a paragraph block.</span>
+                    <span ng-switch-when="l">Present the bounded text as a discrete line.</span>
+                    <span ng-switch-when="x">Remove the contents of this annotation from the text.</span>
+                    <span ng-switch-when="suppress">Hide this annotation, but leave the contents.</span>
+                </small>
+            </div>
+            <div collapse="selector.layout==='suppress'">
+                <h4>Style <small>click to toggle</small></h4>
+                <div class="btn-group btn-group-justified btn-group-sm">
+                    <label btn-checkbox class="btn btn-default" ng-model="selector.bold"><b>bold</b></label>
+                    <label btn-checkbox class="btn btn-default" ng-model="selector.italic"><i>italic</i></label>
+                    <label btn-checkbox class="btn btn-default" ng-class="{'btn-warning':!cleanTextdecoration(selector)}" ng-model="selector.overline"><span style="text-decoration:overline;">overline</span></label>
+                    <label btn-checkbox class="btn btn-default" ng-class="{'btn-warning':!cleanTextdecoration(selector)}" ng-model="selector.strikethrough"><s>strikethrough</s></label>
+                </div>
+                <div class="btn-group btn-group-justified btn-group-sm">
+                    <label btn-checkbox class="btn btn-default" ng-class="{'btn-warning':!cleanPosition(selector)}" ng-model="selector.subscript"><sub>subscript</sub></label>
+                    <label btn-checkbox class="btn btn-default" ng-class="{'btn-warning':!cleanPosition(selector)}" ng-model="selector.superscript"><sup>superscript</sup></label>
+                    <label btn-checkbox class="btn btn-default" ng-model="selector.marked"><mark>marked</mark></label>
+                    <label btn-checkbox class="btn btn-default" ng-class="{'btn-warning':!cleanTextdecoration(selector)}" ng-model="selector.underline"><ins>underline</ins></label>
+                </div>
+                <div class="bg-warning text-warning" collapse="cleanSelector(selector)">
+                    <small>
+                        Conflicting rules may not produce the expected effect.
+                    </small>
+                </div>
+                <h4>Status <small>click to toggle</small></h4>
+                <div class="btn-group btn-group-justified btn-group-sm">
+                    <label btn-radio=" '' " class="btn btn-default" ng-model="selector.status">default</label>
+                    <label btn-radio="'text-info'" class="btn btn-default" ng-model="selector.status"><span class="text-info">info</span></label>
+                    <label btn-radio="'text-warning'" class="btn btn-default" ng-model="selector.status"><span class="text-warning">warning</span></label>
+                    <label btn-radio="'text-danger'" class="btn btn-default" ng-model="selector.status"><span class="text-danger">danger</span></label>
+                </div>
+            </div>
+        </div>
+        <div collapse="selector.layout==='suppress'">
+
+            <label>Custom CSS Rule</label>
+            <input type="text" class="form-control" ng-model="selector.custom" placeholder="inline style format" />
+            <!--        <label>Add a CSS Class</label>
+                    <input type="text" class="form-control" ng-model="selector.classes" placeholder="space-delimited" />-->
+            <h5>Sample</h5>
+            <!--    TODO: replace sample with a real sample from the edition-->
+            <p class='text'>
+                Ut libero justo, hendrerit congue ligula non, lacinia efficitur diam.
+                <span ng-show='selector.layout === "x"' class="text-danger">[ removed ]</span>
+                <span ng-style="previewStyle(selector)" style="{{selector.custom}}"
+                      class="{{selector.status}} {{selector.marked && 'bg-warning'||''}}">
+                    Vestibulum ultrices libero mauris, dignissim dictum libero rhoncus eget.
+                </span>
+                Aliquam faucibus mauris mauris, ac eleifend nisi tincidunt in. Fusce eget
+                nisl nibh.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <label>Apply to:</label>
+            <button class="btn btn-default form-control" ng-click="allSectionIDs()">{{selector.sections.length && 'None'|| 'All'}}</button>
+            <select multiple="" class="form-control" ng-model="selector.sections" ng-options="section.id as section.title for section in sections()"></select>
+            <button class="btn btn-default" ng-click='saveRules(selector)'>Save Rules</button>
+        </div>
+    </div>
+</div>

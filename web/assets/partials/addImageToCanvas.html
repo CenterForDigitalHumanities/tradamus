@@ -1,0 +1,15 @@
+<h3>Add Image</h3>
+<a class="closeBtn" ng-click="closeIntraform();">x</a>
+<div ng-controller="canvasController">
+    <p class="instructions">Enter the absolute path to the image you would like to use and click to preview the image.</p>
+    <!--    TODO: This doesn't save anywhere.-->
+    <p class='debugNote' >For the moment, this will not actually save a new image.</p>
+    <input type='url' ng-model="addUri" />
+    <button type="button" ng-click='fetchImage()' class="smallBtn">fetch</button>
+    <div class="w100 message">{{msg.addImageToCanvas}}</div>
+    <div ng-show='previewImage' class="hhalf w100">
+        <img ng-src='{{previewImage.src}}' height="100%"/><br />
+        <label>Height: {{previewImage.height}}</label>
+        <label>Width: {{previewImage.width}}</label>
+    </div>
+</div>

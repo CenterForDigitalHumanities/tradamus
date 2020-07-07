@@ -1,0 +1,34 @@
+<div class="panel-default">
+    <div class="panel-heading text-center">
+        <h1 class="text-primary">Choose a Project</h1>
+    </div>
+    <div class="panel-body">
+        <!--        <div class="input-group">
+                    <span class="input-group-btn">
+                <a class="btn btn-primary" href="#edition/new" title="Start a New Edition">+ Create</a>
+            </span>
+            <select ng-model="sort" ng-show="user.editions" class="form-control">
+                <option value="">Sort by:</option>
+            <option value="title">A-Z</option>
+            <option value="sortEditionsRecent()">Recently Updated</option>
+            <option value="['creator','title']">My Role</option>
+            </select>
+                </div>-->
+<loader for='userEditions'></loader>
+        <p ng-show="!user.editions.length">
+            You have no projects started.
+            <!--            Maybe some information about Tradamus
+                        or how to get started would be helpful here? Perhaps just clicking
+                        the link above is sufficient.-->
+        </p>
+        <a class="btn btn-primary col-xs-12 col-sm-2 col-sm-offset-10" href="#edition/new" title="Start a New Project">
+            <i class="fa fa-plus"></i>
+            Create New
+        </a>
+        <ul class="list-unstyled col-lg-6 col-lg-offset-3 col-sm-8 col-sm-offset-2 clearfix">
+            <li ng-repeat="ed in user.editions| orderBy:sort">
+                <a href="#edition/{{ed.id}}" class="btn btn-default list-group-item">{{ ed.title || 'untitled' }}</a>
+            </li>
+        </ul>
+    </div>
+</div>

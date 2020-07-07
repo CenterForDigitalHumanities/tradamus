@@ -1,0 +1,121 @@
+<div class="panel-default">
+    <div class="panel-heading text-center">
+        <h1 class="text-primary">
+            Composing
+            <span class="text">{{edition.title}}</span>
+        </h1>
+    </div>
+    <div class="panel-body">
+        <div class="col-md-6">
+            <h4>Text Structure</h4>
+            <p class="help-block">
+                This outline describes the way in which your Materials will be
+                represented in {{edition.title}}. These segments are for organization
+                and may not be how you represent the structure in the final publication.
+            </p>
+            <alert ng-show="display.outlineMessage.type"
+                   type="{{display.outlineMessage.type}}">
+                {{display.outlineMessage.msg}}
+            </alert>
+            <div id="contain" class="form-group position-relative"
+                 as-sortable="sortableControl" ng-model="edition.outlines"
+                 ng-controller="outlineSortController">
+                <div class="list-group-item"
+                     ng-class="{active:display.outline.id === o}"
+                     ng-repeat="o in edition.outlines"
+                     ng-click="display.outline=outlines['id'+o]!==display.outline&&outlines['id'+o]||null"
+                     as-sortable-item>
+                    <i class="fa fa-bars text-muted" as-sortable-item-handle></i>
+                    <a class="pull-right text-primary" ng-click="deleteOutline(o,$event)">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                    {{outlines['id'+o].index}} {{outlines['id'+o].title || 'unlabeled'}}
+                </div>
+            </div>
+            <button class="btn btn-lg btn-primary animated fadeRightBig" ng-hide="display.outline.id==='new'" ng-click="display.outline={id:'new'}">
+                Add segment to outline
+            </button>
+        </div>
+        <div class="col-md-6">
+            <div ng-show="display.outline.id==='new'">
+                <h4>
+                    New Outline
+                    <button type="button" class="btn btn-sm btn-default pull-right" ng-show="display.outline$dirty">
+                        <i class="fa fa-save"></i> save
+                    </button>
+                </h4>
+                <form name="newOutline" ng-submit="createOutline(display.outline.title,display.outline.bounds)">
+                    <div class="form-group">
+                        <label title="Tradamus will store this label for your own internal reference" class="">Label</label>
+                        <input type="text" class="form-control" ng-model="display.outline.title" />
+                        <p class="help-block">Enter a recognizable label for this segment in the
+                            outline for use later when organizing a publication.</p>
+                    </div>
+                    <h4>Included Segments</h4>
+                    <alert type="warning" ng-hide="display.outline.bounds.length" class="clearfix">
+                        <span class="pull-left">
+                            This segment has no content
+                        </span>
+                        <button type="button" ng-click="modalForBounds(display.outline)" class="btn btn-primary animate pull-right">Add segment</button>
+                    </alert>
+                    <div ng-repeat="b in display.outline.bounds||(display.outline.bounds=[])" class="list-group-item">
+                        <span class="text-overflow">
+                            Contains {{display.outline.bounds.length}}
+                            source{{display.outline.bounds.length!==1&&"s"||""}}.
+                        </span>
+                        <span class="lead">{{b.attributes.label}}</span>
+                    </div>
+                    <div class="form-group"  collapse="!display.outline.title||!display.outline.bounds.length">
+                        <button type="button" ng-click="modalForBounds(display.outline)" class="btn btn-primary form-control">Change segments</button>
+                        <button type="submit" class="btn btn-primary form-control" ng-hide="display.outline.$pristine">Save new segment to outline</button>
+                    </div>
+                </form>
+            </div>
+            <div ng-if="display.outline.id>0">
+                <a class="close" ng-click="display.outline=null">&times;</a>
+                <h4>Selection</h4>
+                <div class="form-group">
+                    <label for="elabel" title="Tradamus will store this label for your own internal reference">Label</label>
+                    <input type="text" class="form-control"
+                           ng-change="display.outline$dirty=true"
+                           ng-model="display.outline.title" id="elabel" />
+                    <input type="hidden" ng-model="display.outline.index" />
+                </div>
+                <alert type="warning" ng-show="display.outline$dirty">
+                    <button class="btn btn-primary center-block"
+                            ng-click="update(display.outline)">
+                        Save updates
+                    </button>
+                </alert>
+                <alert type="info">
+                    <button class="btn btn-primary" ng-click="modalForBounds(display.outline)">
+                        Change segments
+                    </button>
+                    Contains {{display.outline.bounds.length}}
+                    source{{display.outline.bounds.length!==1&&"s"||""}}.
+                </alert>
+                <a href="#draft/{{edition.id}}/collation/{{display.outline.id}}" class="btn btn-primary">
+                    <span ng-show="display.outline.bounds.length > 1 && display.outline.decisions.length === 0">
+                            <i class="fa fa-magic"></i>
+                        Collate This Group
+                    </span>
+                    <span ng-show="display.outline.bounds.length === 1">
+                        <i class="fa fa-edit"></i>
+                        Edit Outline
+                    </span>
+                    <span ng-show="display.outline.decisions.length > 0" type="submit">
+                        <i class="fa fa-files-o"></i>
+                        Review Collation
+                    </span>
+                </a>
+                <loader for="collation"></loader>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer clearfix">
+        <div class="center-block text-center" ng-controller="editionController">
+            <span class="text text-primary">{{edition.title||edition.label||"Project"}}</span>
+            <small> by {{getOwner('name')}}</small>
+        </div>
+    </div>
+</div>

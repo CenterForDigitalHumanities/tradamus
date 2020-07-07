@@ -1,0 +1,21 @@
+<div ng-controller="WitnessCtrl">
+    <h3>Read Witness</h3>
+     <a class="closeBtn" ng-click="closeIntraform();">x</a>
+     <p class="instructions">This is only for the simplified reading of this witness:</p>
+     <h2>{{witness.title || witness.id}}</h2>
+<label for="continuous"><input id="continuous" type="checkbox" ng-model="continuous">Hide linebreaks</label>
+<label for="canvases"><input id="canvases" type="checkbox" ng-model="canvases">Show images</label>
+<button class="debug" ng-hide='witness.transcription.pages[0]' ng-click='getDetails()'>Load Pages</button>
+<div class="overflow-auto pageContainer" style="height: 25em;" ng-controller="witnessTranscriptionController">
+    <div class="page pageLike" ng-class="{continuous:continuous}" ng-repeat='page in witness.transcription.pages' data-page-id='{{page.id}}'>
+        <strong>{{page.title && page.title + ' ('+ ($index+1) + ' of '+ witness.transcription.pages.length+')'|| 'page: '+($index+1)}}</strong>
+        <div ng-if='canvases' class='w40 right' ng-controller="canvasController" ng-init="thisPage=page">
+            <img alt="{{page.title}}" no-image
+                 ng-src="image/{{thisCanvas.id}}"
+                 width="100%"
+                 />
+            <button ng-show='noImage' ng-click='addImage(thisCanvas)'>Add Image</button>
+        </div>
+        <div class="line" data-line-id='{{line.id || line}}' ng-class="{w60:canvases}" ng-repeat="line in page.lines">{{getLineText(line)}}</div>
+    </div>
+</div>

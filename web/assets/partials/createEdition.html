@@ -1,0 +1,9 @@
+<header>
+    <h3>Create a New Project</h3>
+</header>
+<form data-ng-submit="newEdition();" name="editionTitle" data-ng-controller='newEditionCtrl'>
+  <input type="text" name="title" placeholder="Pick a Title" data-ng-model="title" />
+  <p class="instructions"><strong>{{title || 'This'}}</strong> will become your working title. It can be changed later, if needed.</p>
+  <input type="submit" value="Start New Project" />
+  <a href="#/dashboard">Cancel</a>
+</form>

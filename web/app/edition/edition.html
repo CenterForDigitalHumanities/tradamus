@@ -1,0 +1,102 @@
+<div class="panel-default">
+    <div class="panel-heading text-center">
+        <h1 class="text-primary" ng-hide="edition.isNew">{{edition.title}}</h1>
+        <h1 class="text-primary" ng-show="edition.isNew">New Project</h1>
+    </div>
+    <div class="panel-body">
+        <p class="help-block col-md-8 col-md-offset-2" ng-show="edition.isNew">
+            To begin, enter a <span class="label label-info" tooltip="rdf:label">title</span>
+            for this new project. This is how this project is displayed on
+            the dashboard. It can be updated later, as needed.
+        </p>
+        <div class="" ng-class="{'col-md-6':!edition.isNew,'col-md-8 col-md-offset-2':edition.isNew}">
+            <form class="form-group" name='title' id='title' ng-submit='(edition.isNew&&create(edition))||updateTitle(edition.title)'>
+                <label for="editionTitle">title</label>
+                <input id="editionTitle" type="text" ng-model="edition.title"
+                       class="form-control input-lg" placeholder="Entitle this Project">
+                <div class="pull-right" collapse="!title.$dirty">
+                    <button class="btn btn-primary" type="submit" ng-hide="edition.isNew">
+                        <i class="fa fa-save"></i> Commit New Title
+                    </button>
+                    <button class="btn btn-primary" type="button" ng-click="create(edition)" ng-show="edition.isNew">
+                        <i class="fa fa-book"></i> Create New Project
+                    </button>
+                </div>
+                <p ng-if="!edition.isNew">Edited by: {{getOwner('name')}}</p>
+            </form>
+            <div metadata-for="edition" ng-if="!edition.isNew">
+                <h2><tr-help topic="Description" ng-show="showHelp"></tr-help> description <span class="badge pull-right">{{item.metadata.length}}</span>
+                    <button ng-click="editMetadataForm(edition)" class="btn btn-sm btn-default">
+                        <i class="fa fa-edit"></i> edit
+                    </button>
+                </h2>
+                <alert ng-hide="item.metadata.length" type="info">
+                    There is no metadata description.
+                </alert>
+                <dl class="dl-horizontal pre-scrollable" ng-if="item.metadata.length">
+                    <dt ng-repeat-start="m in item.metadata" data-mid="m">{{annotations['id' + m].type|| m}}</dt>
+                    <dd ng-repeat-end class="text-overflow" title="{{annotations['id' + m].content}}">{{annotations['id' + m].content}}</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="col-md-6" ng-if="!edition.isNew">
+            <div ng-controller="permissionsController">
+                <h2><tr-help topic="manageuser" ng-show="showHelp"></tr-help> permissions
+                    <button ng-click="editPermissionForm(edition.permissions, edition)" class="btn btn-sm btn-default">
+                        <i class="fa fa-edit"></i> edit
+                    </button>
+                </h2>
+                <ul class="list-unstyled" ng-show="collaborators.length">
+                    <li ng-repeat="c in collaborators|| getCollaborators(edition.permissions)" title="{{c.mail}}">
+                        <i class="fa fa-user"></i>
+                        {{c.name}}, {{c.role|lowercase}}
+                    </li>
+                </ul>
+                <i class="fa fa-globe"></i> Public access is {{parsePublicRole(edition.permissions)}}.
+            </div>
+            <div ng-controller="materialsController">
+                <h2><tr-help topic="importmaterial" ng-show="showHelp"></tr-help> materials
+                    <button ng-click="editMaterialForm(materials)" class="btn btn-sm btn-default">
+                        <i class="fa fa-edit"></i> edit
+                    </button>
+                </h2>
+                <alert ng-hide="edition.witnesses.length" type="info">
+                    There are no attached materials.
+                </alert>
+                <ul class="list-unstyled pre-scrollable"
+                    ng-show="edition.witnesses.length">
+                    <li ng-repeat="mid in edition.witnesses" title="{{m.title}}"
+                        ng-init="m=materials['id'+mid]"
+                        class="text-overflow text">
+                        <a href="#/material/{{m.id}}" class="btn-block">
+                            <b class="col-xs-1 text-overflow">{{m.siglum}}</b>
+                            <i class="fa fa-book"></i>
+                            {{m.title}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer clearfix" ng-if="!edition.isNew">
+        <button ng-click="deleteEdition(edition.id)" class="btn btn-sm btn-danger pull-right">
+            <i class="fa fa-trash"></i>
+            discard
+        </button>
+        <tr-help class='pull-right' topic="discard" ng-show="showHelp"></tr-help>
+        <a href="#/edition" class="btn btn-sm btn-default pull-right">
+            <i class="fa fa-book"></i>
+            change project
+        </a>
+        <tr-help class='pull-right' topic="changeedition" ng-show="showHelp"></tr-help>
+        <tr-help topic="ExportShare" class='pull-left' ng-show="showHelp"></tr-help>
+<button class="btn-info btn pull-left" ng-click="showShareLinks(edition)" ng-controller="exportController">
+            <i class="fa fa-share-alt"></i>
+            Export/Share
+        </button>
+        <div class="center-block text-center">
+            <span class="text text-primary">{{edition.title||edition.label||"Project"}}</span>
+            <small> by {{getOwner('name')}}</small>
+        </div>
+    </div>
+</div>

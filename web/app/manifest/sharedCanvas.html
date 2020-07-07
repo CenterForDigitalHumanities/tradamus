@@ -1,0 +1,19 @@
+<div
+    class="bg-info animate canvas position-relative overflow-hidden"
+    ng-style="{width:canvas.width * display.zoom + 'px', height:canvas.height * display.zoom + 'px'}"
+    >
+    <alert type='info' ng-hide='canvas.images[0].uri' class='position-fixed col-sm-push-4'>No image attached</alert>
+    <alert type='warning' ng-show='noImage["canvas"+canvas.id]' class='position-fixed col-sm-push-4'>Image failed to load: {{canvas.images[0].uri}}</alert>
+    <img ng-src='{{canvas.images[0].uri}}' no-image no-image-src='http://lorempixel.com/g/800/1000/abstract' width='100%'>
+    <div style="position:absolute;height:100%;width:100%;" ng-controller="annotationController">
+        <canvas-annotation
+            ng-show="showAnnotations"
+            class="text-overflow canvasAnnotation"
+            ng-style="::box.style"
+            ng-repeat="box in display['cache_canvasBoxes' + canvas.id]|| buildBoxes(canvas)"
+            title="{{::box.text}}"
+            ng-click="previewText(box.text)">
+            {{::box.text}}
+        </canvas-annotation>
+    </div>
+</div>

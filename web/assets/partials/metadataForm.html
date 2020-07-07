@@ -1,0 +1,12 @@
+<div>
+  <form ng-submit="addDatum(attach)" name="metadataForm">
+  <input class="datum" required ng-minlength="3" type="text" ng-model="m.type" size="20" placeholder="add new name">:
+  <input class="datum" required ng-minlength="1" type="text" ng-model="m.content" size="20" placeholder="add new value">
+  <input class="datum" type="submit" value="+" />
+</form>
+<ul class="keyValue">
+  <li ng-repeat="datum in attach.metadata">
+    {{datum.type}}: {{datum.content}}
+  </li>
+</ul>
+</div>

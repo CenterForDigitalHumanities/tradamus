@@ -1,0 +1,36 @@
+<overlay>
+    <div ng-if="edition.collation" class="fullsize"> <a class="debug" ng-click="digestCollation()">digest{{decisions.length}}</a>
+        <div ng-controller="collationCanvasController">
+      <input type="number" min="1" max="15" ng-model="position.radius" ng-change="drawDecision('canvasTime', thisNode)" /> radius <br />
+      <input type="number" min="{{position.radius*2}}" max="60" ng-model="position.spread" ng-change="drawDecision('canvasTime', thisNode)" /> spread <br />
+      <input type="number" min="{{position.radius * 2}}" max="45" ng-model="position.groupPadding" ng-change="drawDecision('canvasTime', thisNode)" /> spacing <br />
+      <!--      <a ng-click="drawDecision('canvasTime', thisNode)">showme</a>-->
+      <input type="number" min="0" max="{{decisions.length-1}}" ng-model="thisNode" ng-change="drawDecision('canvasTime', thisNode)" /> center on <br />
+      <canvas id="canvasTime" height="200" width="500" style="border:black thin solid">
+        Hooray
+      </canvas>
+      <div class="w100" style="text-align: left;padding: 0 20%;" ng-repeat="m in stuff.motesets">
+          <span class="w20" style="color:#94070A;font-weight: bold;">{{m.witnesses.join(", ")}}</span>
+        <span class="w40 text">"{{m.content}}"</span>
+      </div>
+    </div>
+  </div>
+    <div ng-controller="selectCollateController">
+
+    <div ng-repeat="c in collator">
+      <select ng-model="c.witness"
+              ng-options="w.title||w.id for w in edition.witnesses">
+      </select>
+      <select ng-model="collator[$index].startPage"
+              ng-options="p.title||p.id for p in c.witness.transcription.pages">
+      </select>
+      <input type="number" min="0" max="{{collator[$index].startPage.text.length}}" ng-model="collator[$index].startOffset" />
+      <select ng-model="collator[$index].endPage"
+              ng-options="p.title||p.id for p in c.witness.transcription.pages|pageOrFollowing:c.startPage.index:'index'">
+      </select>
+      <input type="number" min="0" max="{{collator[$index].endPage.text.length}}" ng-model="collator[$index].endOffset" />
+    </div>
+      <button class="actionable smallBtn" ng-click="addCollator()">+</button><button class="actionable smallBtn" ng-click='collate()'>Collate</button>
+    </div>
+  <loader for="collation"></loader>
+</overlay>

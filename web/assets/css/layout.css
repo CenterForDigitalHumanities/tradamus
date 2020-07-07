@@ -1,0 +1,352 @@
+/*
+Copyright 2011-2014 Saint Louis University. Licensed under the
+Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may
+obtain a copy of the License at
+
+http://www.osedu.org/licenses/ECL-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an "AS IS"
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing
+permissions and limitations under the License.
+
+author: cubap@slu.edu
+*/
+
+/* 8. CUSTOM LAYOUT & TYPOGRAPHY (Desktop KM Interface)
+----------------------------------------------------------------------------------------*/
+#container {
+    padding: 1.618em;
+    margin: 0 auto;
+    max-width: 60em;
+    overflow: visible;
+}
+
+header h2:before, header h2:after {
+    width: 42%;
+}
+
+h1 {
+    font-size: 4.4em;
+    line-height: 1.618em;
+    margin: 0.1em 0;
+}
+
+h1 span {
+    font-family: "proxima-nova-1","proxima-nova-2", arial, helvetica, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.382em;
+    line-height: 3.236em;
+    display: block;
+}
+
+h1 span:before, h1 span:after {
+    content: "";
+    border-top: 1px solid #333;
+    height: 0.1em;
+    width: 19%;
+    display: block;
+    margin-top: 1.618em;
+}
+
+h1 span:before {
+    float: left;
+}
+
+h1 span:after {
+    float: right;
+}
+
+ul {
+    margin-left: 0.4em;
+}
+
+ol {
+    margin-left: 0.4em;
+}
+
+p.intro {
+    font-size: 1.618em;
+    line-height: 1.4289em;
+    max-width: 20em;
+    margin-bottom: 1em;
+}
+
+aside {
+    float: right;
+    clear: right;
+    width: 25em;
+    margin-top: -12.5em;
+    height: auto;
+}
+
+footer p {
+    max-width: 17.942em;
+}
+
+section {
+    width: 32.33%;
+    margin: .25em .5%;
+    height: 12em;
+}
+
+section.col2 {
+    width: 65.66%;
+}
+
+section.tall2 {
+    height: 24.5em;
+}
+
+#login {
+    padding: 1.618em;
+}
+
+#login h1, h1.login {
+    font-size: 8em;
+}
+
+#loginForm form {
+    padding: 2em;
+}
+
+#login ul.subtitle {
+    right: 10%;
+    font-size: 150%;
+    letter-spacing: .5em;
+}
+
+#loginForm input, #loginForm button {
+    font-size: 1.25em;
+    color: #DDD;
+}
+
+#loginForm label {
+    margin: 0 1.618%;
+    width: auto;
+    display: inline-block;
+    min-width: 33%;
+}
+
+.focus {
+    box-shadow: 0 0 .75em 0.15em rgba(0,204,255,.75) !important;
+}
+
+#buttons button {
+    font-size: 125%;
+}
+
+#tags {
+    top: -1em;
+}
+
+#tags a {
+    right: 2em;
+    left: auto;
+    padding: 1.0em 1.5em .5em 1.5em;
+    background-color: #666;
+    box-shadow: 0 0 2em #222 inset;
+    min-width: 9em;
+}
+
+footer a {
+    display: inline-block;
+    font-size: 100%;
+}
+
+#overlay button:not(.btn) {
+    max-width: 33.33%;
+    min-height: 4em;
+}
+
+#overlay input[type='text'],#overlay input[type='submit'],#overlay button:not(.btn) {
+    font-size: 1.25em;
+    padding: .5em;
+    border-style: none;
+}
+
+#overlay h3 {}
+
+#overlay {
+    padding: 0;
+    max-width: 60em;
+    margin: auto;
+    overflow: visible;
+    max-height: 40em;
+}
+
+.tabs-bottom .nav.nav-tabs li.active {
+    margin-top: -1px;
+    padding-top: 1px;
+    top: 0;
+}
+
+.tabs-bottom .nav.nav-tabs li.active,.tabs-bottom .nav.nav-tabs li:hover {
+    margin: 0 -.25%;
+    width: 20.5%;
+}
+
+.tabs-bottom .nav.nav-tabs li:hover {
+    margin-top: -.25em;
+    padding-bottom: .25em;
+}
+
+.ui-tabs .nav.nav-tabs li a {
+    display: block;
+    padding: .2em 0;
+    font-size: 100%;
+}
+
+.tabs-bottom .nav.nav-tabs li {
+    width: 19.5%;
+    margin: 0 .25%;
+}
+
+.tabs-bottom .nav.nav-tabs {
+    bottom: 0;
+    left: .25%;
+}
+
+.tabs-bottom  .nav.nav-tabs li:not(.active) {
+    top: 2.3em;
+}
+
+.nav.nav-tabs:hover li.active {
+    top: auto;
+}
+
+label[ng-repeat] {
+    padding: .5em 10em;
+}
+/* 9. CUSTOM LAYOUT & TYPOGRAPHY (Midsize, possibly touch displays)
+----------------------------------------------------------------------------------------*/
+@media screen and (min-width: 30em) and (max-width: 63.236em) {
+
+    #container,#overlay {
+        width: 30em;
+    }
+
+    header h2:before, header h2:after {
+        width: 35%;
+    }
+
+    h1 {
+        font-size: 2.618em;
+        line-height: 1.4em;
+    }
+
+    h1 span {
+        font-size: 0.5em;
+    }
+
+    h1 span:before, h1 span:after {
+        width: 10%;
+    }
+
+    p.intro {
+        font-size: 1.309em;
+        margin-bottom: 1em;
+        max-width: 33em;
+    }
+
+    aside {
+        float: none;
+        width: auto;
+        height: auto;
+        margin: 0 0 2.2em;
+    }
+
+    section {
+        width: 49%;
+    }
+
+    section.col2, section:first-child, section:last-child:nth-child(2n+1) {
+        width: 99%;
+        height: auto;
+    }
+
+    .focus {
+        box-shadow: 0 0 .5em 0.15em rgba(0,204,255,.75) !important;
+    }
+
+    #login {
+        margin: 0;
+    }
+
+    #login h1, h1.login {
+        font-size: 6em;
+    }
+
+    #login ul.subtitle {
+        right: 0%;
+        font-size: 150%;
+        letter-spacing: .5em;
+    }
+
+    #loginForm input {
+        padding: .25em;
+        font-size: 1em;
+    }
+
+    #loginForm label {
+        margin: 0 auto;
+        width: 90%;
+        display: inline-block;
+    }
+
+    #overlay button:not(.btn) {
+    }
+
+    #overlay input[type='text'],#overlay input[type='submit'],#overlay button:not(.btn) {
+        font-size: 1.0em;
+        padding: .25em;
+        width: 80%;
+        margin: 1em auto;
+    }
+
+    #overlay h3 {
+        font-size: 1.5em;
+    }
+
+    #overlay {
+        font-size: 1em;
+        overflow: auto;
+    }
+
+    .tabbable .tab-content {
+        width: 100%;
+        padding: .5em;
+    }
+
+    .tabs-bottom .nav.nav-tabs li.active {
+        margin: 0;
+        padding: 0;
+        top: 0;
+    }
+
+    .ui-tabs .nav.nav-tabs li a {
+        display: block;
+        padding: .2em 0;
+    }
+
+    .tabs-bottom .nav.nav-tabs li {
+        width: 33.3%;
+        border: thin solid white;
+    }
+
+    .tabs-bottom .nav.nav-tabs {
+        bottom: 0;
+        position: relative;
+        margin: -2em;
+        padding: 0;
+        top: 0;
+        width: 30em;
+    }
+
+    label[ng-repeat] {
+        padding: .5em 5em;
+    }
+}

@@ -1,0 +1,167 @@
+<overlay>
+    <tabs class="tabs-bottom">
+        <div>
+            <a class="closeBtn" ng-click="closeToEdition();">x</a>
+            <pane id="publicationTitle" heading="Your Publication">
+                <div class="previewPane w40 hfull">
+          <h2>{{publication.title}}</h2>
+          <p class="hthird text">{{getOwner('name') + ", Editor"}}</p>
+        <p class="hfifth small">{{(publication.permissions|collaborators).length > 1 &&
+            ("You have shared this publication with "+((publication.permissions|collaborators).length-1)
+            + " other"+((publication.permissions|collaborators).length === 1&&". "||"s. "))
+            || "No one else is included on this publication."}}
+        </p>
+      </div>
+      <div class="w60">
+        <p class="instructions result hfifth">{{feedback.title.msg}}</p>
+        <div class="hthird">
+            <label for='title'>Update title: <input type="text" name="title" placeholder="Pick a Title" ng-model="publication.title" ng-change="showSaveTitle=true;"/></label>
+            <button ng-show="showSaveTitle" ng-click="saveTitle()" class="datum debug">save title</button>
+        </div>
+      </div>
+    </pane>
+          <pane id="publicationStructure" heading="Structure">
+              <!--              <div class="previewPane w40" ng-show="publication.sections.length">
+                                <h3>{{publication.title}}</h3>
+          <div class="byline">{{getOwner('name') + ", Editor"}}</div>
+        <h4>Sections</h4>
+        <p class="instructions">These sections are included in this publication.</p>
+        <div class="sections"
+             ng-repeat="section in publication.sections| orderBy:'index'"
+             >
+            {{section.title || 'unlabeled'}}
+            <a class="moveUp" ng-click="moveSection(section)" ng-hide="$first">▲</a>
+            <a class="moveDown" ng-click="moveSection(section,true)" ng-hide="$last">▼</a>
+        </div>
+                            </div>-->
+<div class="col-md-6 col-md-offset-3 col-xs-12">
+                  <h4>Edition Sections</h4>
+                  <p class="instructions" collapse="publication.sections.length">
+                      Add at least one section to <span ng-class="{text:publication.title}">
+                          {{publication.title || 'this publication'}}</span>. Each section may
+                          include several sections from this project, which
+                          may be reused as needed.
+                  </p>
+                  <accordion>
+                      <accordion-group ng-repeat="s in sections()">
+                          <accordion-heading>
+                              {{s.title || ' untitled '+s.id}}
+                              <span class="label label-default label-as-badge"
+                                    ng-class=' { "label-danger":s.sources.length < 1 } '
+                                    title = ' {{s.sources.length && (s.sources.length +" subsections") || "You must add content to this section!"}} '>
+                                  {{s.sources.length}}
+                              </span>
+                              <a class="label label-as-badge label-danger pull-right"
+                                 title="Remove {{s.title}} from this publication"
+                                 ng-click="removeSection(s)">&times;</a>
+                          </accordion-heading>
+                          <ul class="list-group">
+                              <li ng-repeat="source in getOutlines(s.sources)" class="list-group-item">
+                                  {{source.title}}
+                                  <a class="label label-as-badge label-danger pull-right"
+                                     title="Remove {{source.title}} from this section"
+                                     ng-click="removeSource(source.id,s.id)">&times;</a>
+                              </li>
+                              <li class="list-group-item" ng-show="outlines.length - s.sources.length">
+                                  <label class="control-label">Add a new subsection: </label>
+                                  <span class="btn-group">
+                                      <select class="btn btn-default" ng-model="AddingOutline" ng-options="o.title for o in outlines|unusedById:s.sources"></select>
+                                      <button class="btn btn-default" ng-click="addToSection(AddingOutline,s);" title="Add {{AddingOutline.title}} to the section">+</button>
+                                  </span>
+                              </li>
+                          </ul>
+                          </div>
+                      </accordion-group>
+                  </accordion>
+                  <div class="btn-group clear">
+                      <input class="btn" type="text" ng-model="newSect.title" placeholder="Label for new section" />
+                      <button class="btn btn-default" ng-click="newSection(newSect.title)"> + New Section</button>
+                  </div>
+          </pane>
+            <pane id="publicationAccess" heading="Access Control" class="disabled">
+                <header>
+          <h3>Access Control</h3>
+      </header>
+      <h4>Individuals</h4>
+      <form name='permissionForm' ng-controller="permissionsController" ng-submit="addCollaborator(member)" ng-init="form = permissionForm" >
+          <label for="newCollaborator"><input id="newCollaborator" type="email" required placeholder="Enter an E-mail" name="mail" ng-model="member.mail" /></label>
+        <select name="role" ng-model="member.role">
+          <option ng-repeat='role in roles' value='{{role}}'>{{role}}</option>
+        </select>
+        <input type="submit" class='datum smallBtn' style='float:none;' value="+update" />
+        <p class="clear instructions" ng-hide='memberForm.$valid'>Enter the e-mail of the individual with whom you would like to collaborate. More users can be added later.</p>
+      </form>
+        <p ng-show='member.role == "EDITOR"'>This user will have full access to the Publication.</p>
+        <p ng-show='member.role == "VIEWER"'>This user's access is read-only; no changes can be made to your Publication.</p>
+        <p ng-show='member.role == "NONE"'>This user will be removed from your Publication completely. Existing contributions will be retained.</p>
+        <ul class="keyValue">
+            <li ng-click="member.role=c.role;member.mail=c.mail" ng-repeat="c in publication.permissions | collaborators" data-id="{{c.id}}">{{ c.name + ', (' + c.mail + ') - ' || 'loading' }}{{c.role}}</li>
+        </ul>
+      <h4>Public Sharing</h4>
+      <form name='publicForm' ng-controller="permissionsController" ng-submit="addCollaborator(publicUser,true)" ng-init="form = publicForm" >
+          Currently Public Role: {{getPublicUser().role || 'undefined' }}
+          <label ng-repeat='role in roles'><input ng-model='publicUser.role' type='radio' value='{{role}}' />{{role}}</label>
+          <p ng-show='publicUser.role == "EDITOR"'>You will let any registered user mess with your Publication. You are brave.</p>
+          <p ng-show='publicUser.role == "VIEWER"'>This publication is listed on the "Publications" list as read-only, based on your <abbr title="This isn't real. I'm sorry. It will be sometime.">publication settings</abbr>.</p>
+          <p ng-show='publicUser.role == "NONE"'>No one other than those above can see your Publication.</p>
+          <input class='datum debug' style='float:none;' type="submit" value="Update" />
+      </form>
+    </pane>
+    <pane id="publicationLayout" heading="Style and Layout">
+        <header>
+          <h3>Style and Layout</h3>
+        </header>
+        <div ng-controller="publicationLayoutController">
+            <div ng-hide="annotationTypes.length + annotationTags.length" class="bg-danger text-danger">
+                <p>You have no annotations in this publication.</p>
+            </div>
+            <h5>Types</h5>
+            <ul class="list-unstyled">
+                <li ng-repeat="anno in annotationTypes" class="btn btn-default" ng-click="openStyleForm({type:'type',value:anno})">
+                    {{anno}}
+                </li>
+            </ul>
+            <h5>Tags</h5>
+            <ul class="list-unstyled">
+                <li ng-repeat="anno in annotationTags" class="btn btn-default" ng-click="openStyleForm({type:'tag',value:anno})">
+                    {{anno}}
+                </li>
+            </ul>
+        </div>
+    </pane>
+          <pane id="publicationTemplates" heading="Templates and Export">
+        <header>
+          <h3>Templates and Export</h3>
+        </header>
+              <label title="Resource Data Framework">Get RDF </label>
+              <div class="btn-group btn-group-lg">
+                  <button class="btn btn-default disabled" type="button">JSON-LD</button>
+            <button class="btn btn-default disabled" type="button">Turtle</button>
+            <button class="btn btn-default disabled" type="button">XML</button>
+              </div>
+              <h4>Links for Publications</h4>
+              <ul class="list-unstyled text-left col-lg-8 col-lg-offset-2">
+                  <li class="list-group-item">
+                      <span class="col-lg-6 text-right">Dynamic Publication: </span>
+                      <a href="#/publication/{{publication.id}}" target="_blank">#/publication/{{publication.id}}</a>
+                  </li>
+                  <li class="list-group-item">
+                      <span class="col-lg-6 text-right">*Analog-y Publication: </span>
+                      <a href="#/publication/{{publication.id}}" target="_blank">#/publication/{{publication.id}}/print</a>
+                  </li>
+                  <li class="list-group-item">
+                      <span class="col-lg-6 text-right">*Publication for Peer-Review: </span>
+                      <a href="#/publication/{{publication.id}}" target="_blank">#/publication/{{publication.id}}/anonymous</a>
+                  </li>
+              </ul>
+              <!--              <small>* not real yet</small>
+                            <pre>things about choosing a template and exporting
+* export to JSON
+* digital edition
+* peer review
+* static render
+                            </pre>-->
+          </pane>
+      </div>
+  </tabs>
+</overlay>

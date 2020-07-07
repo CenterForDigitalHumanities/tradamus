@@ -1,0 +1,10 @@
+<div id="overlay">
+  <div data-ng-if="isNew">
+    <!--    New Edition-->
+    <ng-include src=" 'assets/partials/createEdition.html' "></ng-include>
+  </div>
+  <div data-ng-if="!isNew">
+<!--    Managing an Existing Edition-->
+    <ng-include src=" 'assets/partials/editEdition.html' "></ng-include>
+  </div>
+</div>

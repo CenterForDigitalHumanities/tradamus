@@ -1,0 +1,7 @@
+<div>
+  <span ng-repeat='mote in edition.collation'>
+    <span ng-repeat='anchor in mote' tr-position='{{anchor.pos}}' tr-length='{{anchor.length}}' tr-siglum='{{anchor.siglum}}'>
+    </span>
+    {{mote.text}}
+  </span>
+</div>

@@ -1,0 +1,29 @@
+<div>
+    <a class="btn btn-danger pull-right" ng-click="modal.close()">
+        <i class="fa fa-close"></i>
+    </a>
+    <div class='modal-header'>
+        <h2 class='modal-title'>Contact Tradamus</h2>
+    </div>
+    <iframe name="none" class="ng-hide"></iframe>
+    <form action="https://sourceforge.net/rest/p/tradamus/tickets/new" method="POST" target="none">
+        <div class="modal-body">
+            <p class="bg-danger text-danger" ng-repeat="m in messages">{{m}}</p>
+            <input type="hidden" value="New User Submission by {{umail || 'anon'}} from {{url}}" name="ticket_form.summary" />
+            <input type="hidden" value="unread" name="ticket_form.status" />
+            <input type="hidden" value="domhnall-101" name="ticket_form.assigned_to" />
+            <label>Type of Submission</label><select name="ticket_form.labels" class="form-control">
+                <option value="userSubmitted,comment">Leave a comment</option>
+                <option value="userSubmitted,inquiry">Ask a question</option>
+                <option value="userSubmitted,suggestion">Make a suggestion</option>
+                <option value="userSubmitted,issue">Report a bug</option>
+            </select>
+            <small class="help-block">User {{umail || 'anonymous'}} will be submitted with this request.</small>
+            <label>Content</label>
+            <textarea name="ticket_form.description" placeholder="markdown allowed" class="form-control"></textarea>
+        </div>
+        <div class="modal-footer">
+            <input type="submit" class="btn btn-primary" ng-click="modal.close()" />
+        </div>
+    </form>
+</div>

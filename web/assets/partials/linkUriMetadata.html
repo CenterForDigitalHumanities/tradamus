@@ -1,0 +1,20 @@
+<h3>Text ⇨ Metadata</h3>
+<a class="closeBtn" ng-click="closeIntraform();">x</a>
+<div ng-controller="textInputMetadataController">
+    <form>
+        <input type="url" ng-model="remote" /><input type="button" ng-click="resolveURI()" value="fetch" />
+    </form>
+    <div class="previewPane w40" ng-class="{'pre-wrap':metadata.preview !== metadata.input,'unparsed':metadata.preview === metadata.input}" ng-show="metadata.preview">    <button class="actionable right" ng-show="isObj(metadata.preview)" ng-click="resetManipulated()" >Adjust this data</button>
+        {{metadata.preview| json}}</div>
+    <textarea ng-change="updatePreview()" ng-model="metadata.input" placeholder="Paste JSON, CSV, or XML here" class="w60 hhalf"></textarea>
+    <!--  <button class="actionable tile" ng-click='closeIntraform()'>cancel</button>-->
+    <div class="modal" ng-show="manipulated">
+        <p class="instructions">Change this until it looks right:</p>
+        <ul>
+            <li ng-repeat="node in manipulated" >
+                <span class="metadataType">{{node.type}}:</span> <span class="metadataContent">{{node.content}}</span> <a class='actionable' ng-click="removeNode(node.type)">Remove</a><a class='actionable' ng-show="isObj(node.content)" ng-click="enterNode(node.type)">Drill Down</a><a class='actionable' ng-show="isObj(node.content)" ng-click="expandNode(node.type)">Expand</a>
+            </li>
+        </ul>
+        <button class="actionable tile" ng-click='addMetadata()'>Add</button>
+    </div>
+</div>

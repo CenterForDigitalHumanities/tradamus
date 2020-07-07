@@ -1,0 +1,110 @@
+<overlay>
+    <tabs class="tabs-bottom">
+        <div ng-controller="editEdition">
+            <pane id="editionTitle" heading="Your Project">
+                <div class="previewPane w40 hfull">
+        <h2>{{edition.title}}</h2>
+        <p class="hthird text">{{getOwner('name') + ", Owner"}}</p>
+        <p class="hfifth small">{{(edition.permissions|collaborators).length > 1 &&
+            ("You have shared this project with "+((edition.permissions|collaborators).length-1)
+            + " other"+((edition.permissions|collaborators).length === 1&&". "||"s. "))
+            || "No one else is included on this project. "}}
+        </p>
+        <p class="hfifth small" ng-show="edition.witnesses">There {{edition.witnesses.length === 1 &&
+            "is only one material"
+            || "are "+edition.witnesses.length+" materials"}} attached.</p>
+      </div>
+      <div class="w60">
+        <p class="instructions result hfifth">{{feedback.title.msg}}</p>
+        <div class="hthird">
+          <label for='title'>Update title: <input type="text" name="title" placeholder="Pick a Title" ng-model="edition.title" ng-change="showSaveTitle=true;"/></label>
+        <button ng-show="showSaveTitle" ng-click="saveTitle()" class="datum debug">save title</button>
+      </div>
+        <p class="instructions">Describe your Project with metadata on the next tab.</p>
+        <label class="" for="delEd">Remove this Project entirely from Tradamus:
+        </label><button id="delEd" class="btn btn-danger" ng-click="deleteEdition()">Delete</button>
+      </div>
+    </pane>
+    <pane id="editionWitnesses" heading="Describe">
+      <div class="previewPane w40">
+        <h3>{{edition.title}}</h3>
+        <div class="byline">{{getOwner('name') + ", Editor"}}</div>
+        <h4>Metadata</h4>
+        <table class="keyValue">
+            <tr ng-repeat="m in edition.metadata | hideInternals">
+                <td>{{m.type}} :</td><td>{{m.content}}</td><td><a class="actionable" ng-click="deleteDatum($index)" title="click to remove">-</a></td>
+          </tr>
+        </table>
+      </div>
+
+        <div class="w60">
+      <h2>Add Metadata</h2>
+        <form ng-submit="addDatum()" name="metadataForm">
+          <input class="datum" required ng-minlength="3" type="text" ng-model="newDatum.type"  size="20" placeholder="add new name">
+          <span style="font-size: 2em;"> : </span>
+          <input class="datum" required ng-minlength="1" type="text" ng-model="newDatum.content" size="20" placeholder="add new value">
+          <input class="datum" type="submit" value="+" />
+        </form>
+        <h3>Batch Upload</h3>
+        <button class="actionable tile disabled" ng-click="openIntraform('assets/partials/uploadMetadata.html')">Upload a file</button>
+        <button class="actionable tile" ng-click="openIntraform('assets/partials/textInputMetadata.html')">Paste text</button>
+        <button class="actionable tile" ng-click="openIntraform('assets/partials/linkUriMetadata.html')">Link URI</button>
+        <button ng-show="saveMeta" class="debug" ng-click="saveMetadata()">Save Changes</button>
+      </div>
+    </pane>
+    <pane id="editionCollaborators" heading="Collaborate">
+      <header>
+        <h3>Add Collaborators</h3>
+      </header>
+      <form name='memberForm' ng-controller="permissionsController" ng-submit="addCollaborator(member)" ng-init="form = memberForm" >
+        <label for="newCollaborator"><input id="newCollaborator" type="email" required placeholder="Enter an E-mail" name="mail" ng-model="member.mail" /></label>
+        <select name="role" ng-model="member.role">
+          <option ng-repeat='role in roles' value='{{role}}'>{{role}}</option>
+        </select>
+        <input type="submit" class='datum smallBtn' style='float:none;' value="+update" />
+        <p class="clear instructions" ng-hide='memberForm.$valid'>Enter the e-mail of the individual with whom you would like to collaborate. More users can be added later.</p>
+      </form>
+        <p ng-show='member.role == "EDITOR"'>This user will have full access to the project.</p>
+        <p ng-show='member.role == "VIEWER"'>This user's access is read-only; no changes can be made to your project.</p>
+        <p ng-show='member.role == "NONE"'>This user will be removed from your project completely. Existing contributions will be retained.</p>
+        <ul class="keyValue">
+        <li ng-click="member.role=c.role;member.mail=c.mail" ng-repeat="c in edition.permissions | collaborators" data-id="{{c.id}}">{{ c.name + ', (' + c.mail + ') - ' || 'loading' }}{{c.role}}</li>
+      </ul>
+    </pane>
+    <pane id="editionSharing" heading="Share">
+      <header>
+        <h3>Setup Public Sharing</h3>
+      </header>
+      <form name='publicForm' ng-controller="permissionsController" ng-submit="addCollaborator(publicUser,true)" ng-init="form = publicForm" >
+        Currently Public Role: {{getPublicUser().role || 'undefined' }}
+        <label ng-repeat='role in roles'><input ng-model='publicUser.role' type='radio' value='{{role}}' />{{role}}</label>
+        <p ng-show='publicUser.role == "EDITOR"'>You will let any registered user mess with your project. You are brave.</p>
+        <p ng-show='publicUser.role == "VIEWER"'>This project is listed on the "Public Projects" list as read-only, based on your <abbr title="This isn't real. I'm sorry. It will be sometime.">publication settings</abbr>.</p>
+        <p ng-show='publicUser.role == "NONE"'>No one other than collaborators can see your project.</p>
+        <input class='datum debug' style='float:none;' type="submit" value="Update" />
+      </form>
+    </pane>
+        <pane id="editionReview" heading="Compose">
+          <ng-include src=" 'assets/partials/compose.html' "></ng-include>
+          <!--          <header>
+                  <h3>Compose</h3>
+                </header>-->
+          <!--      <h4>{{edition.title}} (id:{{edition.id}})</h4>
+                <ul class="keyValue" ng-hide='!edition.metadata'>
+        <li ng-repeat='m in edition.metadata'>
+          {{m.type}}: {{m.content}}
+        </li>
+      </ul>
+      <ul class="keyValue" ng-hide='!edition.permissions'>
+        <li ng-repeat='member in edition.permissions'>{{member.name}}: {{member.role}}</li>
+      </ul>
+      <a ng-hide="decisions" href="#/edition/{{edition.id}}/collate">Collate and Confirm</a>
+      <div class="pageLike w100 hhalf" ng-show="decisions">
+        <span class="text" ng-repeat="text in decisions">{{text.content+" " || "^"}}</span>
+      </div>-->
+<!--      <a href="#/collate/{{edition.id}}">Read Witnesses</a>-->
+    </pane>
+        <!--        <div class='intraform' ng-show='intraform.show' ng-include='intraform.content'></div>-->
+      </div>
+  </tabs>
+</overlay>
