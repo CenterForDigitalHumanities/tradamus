@@ -1,0 +1,276 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html data-ng-app="tradamus">
+
+<head>
+    <title>Tradamus - Digital Critical Edition Creation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" media="all">
+    <link rel="stylesheet" href="web/app/app.css" media="all">
+    <link rel="stylesheet" href="web/app/lib/ng-sortable.css" media="all">
+    <link rel="stylesheet" href="web/app/lib/ng-sortable.style.css" media="all">
+    <link rel="stylesheet" href="web/app/lib/loading-bar.css" media="screen">
+    <link rel="stylesheet" href="web/app/lib/animate.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=BenchNine:700' rel='stylesheet' type='text/css'>
+    <style type="text/css">
+        html {
+            background-color: #111111;
+        }
+
+        div.no-gutter {
+            padding: 0;
+        }
+
+        .benchBtn,
+        footer button.btn-link {
+            color: rgba(255, 255, 255, .5);
+            text-transform: uppercase;
+        }
+
+        .benchBtn:hover,
+        footer button.btn-link:hover {
+            color: rgba(255, 255, 255, 1);
+        }
+
+        .benchBtn {
+            width: 62.5%;
+        }
+
+        .benchBtn+.benchBtn {
+            width: 35%;
+            margin-left: 1%;
+        }
+
+        .postcolon {
+            text-transform: uppercase;
+            text-align: right;
+            color: #666;
+            font-family: sans-serif;
+            font-size: 1.68rem;
+            position: relative;
+            right: 0;
+            top: -1em;
+            letter-spacing: .25rem;
+            font-weight: bold;
+        }
+
+        .nav.nav-stacked {
+            width: 18%;
+            margin-right: 2%;
+            float: left;
+        }
+
+        .nav.nav-stacked li a {
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .6);
+            font-family: 'BenchNine', sans-serif;
+            font-size: 2rem;
+            transition: zIndex 0s, background 500ms, color 500ms, border 500ms;
+            text-decoration: none;
+            position: relative;
+            background-color: #003a53;
+            border-color: #002f46;
+            padding: 10px 16px;
+            line-height: 1.33;
+            border-radius: 6px;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid transparent;
+        }
+
+        .nav.nav-stacked li a.active,
+        .nav.nav-stacked li a:hover {
+            color: #fff;
+            background-color: #428bca;
+        }
+
+        .tab-content {
+            width: 80%;
+            float: left;
+        }
+
+        .tab-pane .panel-title {
+            color: #31708f;
+            text-transform: uppercase;
+            border-bottom: #666 2px solid;
+            font-weight: bold;
+            font-size: 168%;
+        }
+
+        .tab-pane .image-panel {
+            width: 40%;
+            margin: -15px;
+            margin-left: 0;
+        }
+
+        .tab-pane .image-panel img {
+            box-shadow: -.25rem -.25rem 3rem rgba(0, 0, 0, .68);
+        }
+
+        #landingLogin {
+            position: absolute;
+            top: 20%;
+            width: 100%;
+            left: 0;
+        }
+
+        #landingLogin:after {
+            content: "";
+            position: fixed;
+            z-index: 1;
+            background: rgba(0, 0, 0, .68);
+            top: -20%;
+            left: -20%;
+            height: 140%;
+            width: 140%;
+        }
+
+        .close-backdrop {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 2;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            text-align: center;
+            background: #666;
+        }
+    </style>
+</head>
+
+<body id="container" class="container ng-cloak animated fadeIn" ng-controller="authController">
+    <header id="title" class="form-group clearfix">
+        <div class="no-gutter col-xs-9 col-sm-8">
+            <img src="web/assets/img/TRAD_Fullogo.png" alt="Tradamus logo" width="100%">
+            <div class="postcolon">digital critical edition creation</div>
+        </div>
+        <div class="col-xs-3 col-sm-4 form-group" style="padding-top: 16px;">
+            <img src="web/assets/img/MELLON-LOGO.png" alt="Mellon Foundation" width="32%">
+            <img src="web/assets/img/CDH-LOGO.png" alt="Center for Digital Humanities" width="32%">
+            <img src="web/assets/img/STLU_Logo.png" alt="Saint Louis University" width="32%">
+        </div>
+        <div class="col-xs-12 col-sm-4 caps-label">
+            <span ng-hide="user.id>0">
+                <button class="btn btn-lg btn-info benchBtn animate disabled">sign up</button>
+                <button class="btn btn-lg btn-primary benchBtn animate disabled">login</button>
+            </span>
+        </div>
+        <img src="web/assets/img/masthead.png" alt="masthead" width="100%" class="hidden-xs col-sm-12">
+    </header>
+    <div class="col-xs-12" style="padding-bottom:3rem;" ng-controller="helpController">
+        <div class="panel-default clearfix">
+            <div class="panel-body" ng-controller="landingController">
+                <tabset vertical="true" type="pills">
+                    <tab heading="tradamus" class='animate fadeIn'>
+                        <div class="pull-right clearfix image-panel">
+                            <img src="web/assets/img/TRADHOMERIGHT2.jpg" alt="" width="80%" class="pull-right">
+                            <img src="web/assets/img/TRADHOMERIGHT2.jpg" alt="" width="90%" class="pull-right">
+                            <img src="web/assets/img/TRADHOMERIGHT3.png " alt="" width="100%" class="pull-right">
+                        </div>
+                        <div>
+                            <div class="panel-heading">
+                                <span class="panel-title">End of Service Notice</span>
+                            </div>
+                            <p><span class="lead">Tradamus is not creating new Editions.</span> Despite interest in this technology and the reuse of many of its modules in other projects, the funding for this project has expired and the supporting technology has become brittle enough that maintenance costs overwhelmed demand. We apologize for any disappointment this creates and invite contact <a href="mailto:digitalhumanities@slu.edu">via email</a>.</p>
+                            <p>Importantly, the developers of this application remain very active in OSS and in developing Digital Humanities software resources. We are highly visible on <a href="https://github.com/CenterForDigitalHumanities">Github</a> and the code for this project <a href="https://github.com/CenterForDigitalHumanities/tradamus">has been archived</a> there as well. We invite anyone to contribute or fork to this project and will enthusiastically support any individuals wanting to modularize, modernize, or recontextualize any of hte many tools contained within it.</p>
+                            <p>If you have an individual project related to the goals of Tradamus (digital edition creation, simplified collation, text annotation), please do not be disheartened by this notice. Send us a message <a href="mailto:digitalhumanities@slu.edu">via email</a> or complete an <a href="https://forms.gle/DFpoaXiJWe9xQcKN6">Intake Questionnaire</a> and we'll reach out to you soon.</p>
+                        </div>
+                    </tab>
+                    <tab heading="about us">
+                        <div class="panel-heading">
+                            <h1 class="panel-title">The Tradamus Team</h1>
+                        </div>
+                        <p>
+                            The Tradamus suite of tools has been developed and is
+                            maintained by the Center for Digital Humanities
+                            <a href="mailto:digitalhumanities@slu.edu">&lt;digitalhumanities@slu.edu&gt;</a>.
+                            The original team for the 1.0 release in July 2015 is
+                            listed here.
+                        </p>
+                        <dl>
+                            <dt>Dr. Jim Ginther, Principal Investigator</dt>
+                            <dd>Director, Center for Digital Humanities, Saint Louis University</dd>
+                            <dt>Domhnall Ó h'Éigheartaigh</dt>
+                            <dd>Project Manager, UX and UI, Center for Digital Humanities, Saint Louis University</dd>
+                            <dt>Patrick Cuba</dt>
+                            <dd>Lead Developer, Center for Digital Humanities, Saint Louis University</dd>
+                            <dt>Eric Smith</dt>
+                            <dd>Software Developer, <a href="http://www.tarkvara.org/" target="_blank">Tarkvara
+                                    Design</a></dd>
+                        </dl>
+                    </tab>
+                </tabset>
+            </div>
+        </div>
+    </div>
+    <footer class="caps-label">
+        <button class="btn btn-link">Home</button>
+        <button class="btn btn-link">Help</button>
+        <button class="btn btn-link">Contact Us</button>
+        <button class="btn btn-link" ng-click="tabs[2].active=true">About Us</button>
+        <button class="btn btn-link" ng-click="display.showLogin=true">Login</button>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-route.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.js"></script>
+    <script type="text/javascript"
+        src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap.js"></script>
+    <script type="text/javascript"
+        src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.js"></script>
+    <script type="text/javascript" src="web/app/lib/angular-file-upload.min.js"></script>
+    <script type="text/javascript" src="web/app/lib/xml2json.min.js"></script>
+    <script type="text/javascript" src="web/app/lib/ng-sortable.js"></script>
+    <script type="text/javascript" src="web/app/lib/http-auth-interceptor.js"></script>
+    <script type="text/javascript" src="web/app/lib/loading-bar.js"></script>
+    <script type="text/javascript" src="web/app/lib/Markdown.Converter.js"></script>
+    <script type="text/javascript" src="web/app/lib/Markdown.Sanitizer.js"></script>
+
+    <script src="//cdn.jsdelivr.net/rangy/1.3alpha.20140706/rangy-core.js"></script>
+    <script src="//cdn.jsdelivr.net/rangy/1.3alpha.20140706/rangy-cssclassapplier.js"></script>
+    <script src="//cdn.jsdelivr.net/rangy/1.3alpha.20140706/rangy-selectionsaverestore.js"></script>
+    <script src="//cdn.jsdelivr.net/rangy/1.3alpha.20140706/rangy-serializer.js"></script>
+
+    <script src="web/app/app.js"></script>
+    <script src="web/assets/js/controllers.js"></script>
+    <script src="web/assets/js/models.js"></script>
+    <script src="web/assets/js/services.js"></script>
+    <script src="web/assets/js/directives.js"></script>
+    <script src="web/assets/js/filters.js"></script>
+    <script src="web/app/auth/authDirectives.js"></script>
+    <script src="web/app/auth/authControllers.js"></script>
+    <script src="web/app/edition/editionControllers.js"></script>
+    <script src="web/app/metadata/metadataController.js"></script>
+    <script src="web/app/components/textInputController.js"></script>
+    <script src="web/app/components/fileInput.js"></script>
+    <script src="web/app/components/objectTree.js"></script>
+    <script src="web/app/components/thumbnails.js"></script>
+    <script src="web/app/help/help.js"></script>
+    <script src="web/app/permissions/permissionsController.js"></script>
+    <script src="web/app/materials/materialController.js"></script>
+    <script src="web/app/components/exportController.js"></script>
+    <script src="web/app/components/navigation.js"></script>
+    <script src="web/app/manifest/manifestController.js"></script>
+    <script src="web/app/sequences/organizeControllers.js"></script>
+    <script src="web/app/annotation/annotationController.js"></script>
+    <script src="web/app/draft/draftController.js"></script>
+    <script src="web/app/publication/publicationControllers.js"></script>
+    <script src="web/app/components/utils.js"></script>
+</body>
+
+</html>
